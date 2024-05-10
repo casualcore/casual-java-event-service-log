@@ -14,8 +14,11 @@ import picocli.CommandLine.Spec;
 import se.laz.casual.event.service.log.cli.runner.EventServiceLogParams;
 import se.laz.casual.event.service.log.cli.runner.EventServiceLogRunner;
 
+import java.io.File;
 import java.net.URI;
+import java.util.Optional;
 import java.util.concurrent.Callable;
+import java.util.regex.Pattern;
 
 import static se.laz.casual.event.service.log.cli.internal.StreamEncoder.toPrintWriter;
 
@@ -25,7 +28,16 @@ public class Main implements Callable<Integer>, EventServiceLogParams
     @Spec
     private CommandSpec spec;
 
-    @Option( names = "--eventServerUrl", description = "Your name.", required = true )
+    @Option( names = {"-f", "--file"}, description = "where to log (default: ${DEFAULT-VALUE})", defaultValue = "statistics.log" )
+    private File logFile;
+    @Option( names = {"-d", "--delimiter"}, description = "delimiter between columns (default: ${DEFAULT-VALUE})", defaultValue = "|" )
+    private String logColumnDelimiter;
+    @Option( names = {"--filter-inclusive"}, description = "only services that match the expression are logged" )
+    private Pattern logFilterInclusive;
+
+    @Option( names = {"--filter-exclusive"}, description = "only services that do not match the expression are logged" )
+    private Pattern logFilterExclusive;
+    @Option( names = {"--eventServerUrl"}, description = "event server from which to retrieve events.", required = true )
     private URI eventServerUrl;
 
     @Override
@@ -33,6 +45,31 @@ public class Main implements Callable<Integer>, EventServiceLogParams
     {
         return this.eventServerUrl;
     }
+
+    @Override
+    public File getLogFile()
+    {
+        return this.logFile;
+    }
+
+    @Override
+    public String getLogColumnDelimiter()
+    {
+        return this.logColumnDelimiter;
+    }
+
+    @Override
+    public Optional<Pattern> getLogFilterInclusive()
+    {
+        return Optional.ofNullable( this.logFilterInclusive );
+    }
+
+    @Override
+    public Optional<Pattern> getLogFilterExclusive()
+    {
+        return Optional.ofNullable( this.logFilterExclusive );
+    }
+
 
     public static void main( String[] args )
     {
@@ -46,11 +83,18 @@ public class Main implements Callable<Integer>, EventServiceLogParams
      */
     private static int execute( String[] args )
     {
-        return new CommandLine( new Main() )
+        return newCommandLine( new Main() )
+                .execute( args );
+    }
+
+    static CommandLine newCommandLine( Main instance )
+    {
+        return new CommandLine( instance )
                 .setOut( toPrintWriter( System.out ) )
                 .setErr( toPrintWriter( System.err ) )
                 .setCaseInsensitiveEnumValuesAllowed( true )
-                .execute( args );
+                .setTrimQuotes(true)
+                ;
     }
 
     /**

@@ -25,7 +25,7 @@ public class EventServiceLogRunner implements CommandRunner<EventServiceLogParam
     }
 
     @Override
-    public EventServiceLogParams getParams( )
+    public EventServiceLogParams getParams()
     {
         return this.params;
     }
@@ -33,8 +33,27 @@ public class EventServiceLogRunner implements CommandRunner<EventServiceLogParam
     @Override
     public int run()
     {
-        outputStream.print( "Hello" );
+        outputStream.print( printParams() );
         outputStream.flush();
         return 0;
+    }
+
+    private StringBuilder printParams()
+    {
+        StringBuilder builder = new StringBuilder()
+                .append( "--file: " ).append( params.getLogFile() ).append( System.lineSeparator() )
+                .append( "--delimiter: " ).append( params.getLogColumnDelimiter() ).append( System.lineSeparator() );
+
+        builder.append( "--filter-inclusive: " );
+        params.getLogFilterExclusive().ifPresent( (p) -> builder.append( p.pattern() ) );
+        builder.append( System.lineSeparator() );
+
+        builder.append( "--filter-exclusive: " );
+        params.getLogFilterExclusive().ifPresent( (p) -> builder.append( params.getLogFilterExclusive() ) );
+        builder.append( System.lineSeparator() );
+
+        builder.append( "--eventServerUrl: " ).append( params.getEventServerUrl() )
+                .append( System.lineSeparator() );
+        return builder;
     }
 }
