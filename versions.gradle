@@ -1,0 +1,32 @@
+/*
+ * Copyright (c) 2024, The casual project. All rights reserved.
+ *
+ * This software is licensed under the MIT license, https://opensource.org/licenses/MIT
+ */
+
+// casual-java group and version
+group 'se.laz.casual'
+version '0.0.1-SNAPSHOT'
+
+quarkusPluginId = 'io.quarkus'
+quarkusPluginVersion = '3.10.0'
+quarkusPlatformGroupId = 'io.quarkus.platform'
+quarkusPlatformArtifactId = 'quarkus-bom'
+quarkusPlatformVersion = '3.10.0'
+
+
+ext.libs = [
+        quarkus_platform: "${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}",
+        quarkus_picocli : 'io.quarkus:quarkus-picocli',
+        quarkus_arc     : 'io.quarkus:quarkus-arc',
+        quarkus_junit5  : 'io.quarkus:quarkus-junit5',
+
+        // for spock
+        groovy_bom      : 'org.apache.groovy:groovy-bom:4.0.5',
+        groovy          : 'org.apache.groovy:groovy',
+        spock_bom       : 'org.spockframework:spock-bom:2.3-groovy-4.0',
+        spock_core      : 'org.spockframework:spock-core',
+        spock_junit4    : 'org.spockframework:spock-junit4',
+        byte_buddy      : 'net.bytebuddy:byte-buddy:1.14.8',
+        objenesis       : 'org.objenesis:objenesis:3.3',
+]

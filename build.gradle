@@ -1,0 +1,46 @@
+plugins {
+    id 'java'
+    id 'io.quarkus'
+    id 'jacoco'
+    id 'groovy'
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+apply from: "$rootProject.projectDir/versions.gradle"
+
+dependencies {
+    implementation enforcedPlatform(libs.quarkus_platform)
+    implementation libs.quarkus_picocli
+    implementation libs.quarkus_arc
+
+
+    testImplementation libs.quarkus_junit5
+    // for spock
+    testImplementation platform(libs.groovy_bom)
+    testImplementation libs.groovy
+    testImplementation platform(libs.spock_bom)
+    testImplementation libs.spock_core
+    testImplementation libs.byte_buddy
+    testImplementation libs.objenesis
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+test {
+    systemProperty "java.util.logging.manager", "org.jboss.logmanager.LogManager"
+}
+compileJava {
+    options.encoding = 'UTF-8'
+    options.compilerArgs << '-parameters' << "-Xlint:all" << "-Werror"
+}
+
+compileTestJava {
+    options.encoding = 'UTF-8'
+}
