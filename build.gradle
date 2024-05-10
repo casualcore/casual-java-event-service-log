@@ -16,8 +16,9 @@ dependencies {
     implementation enforcedPlatform(libs.quarkus_platform)
     implementation libs.quarkus_picocli
     implementation libs.quarkus_arc
+    implementation libs.casual_event_client
 
-
+    testImplementation libs.casual_test
     testImplementation libs.quarkus_junit5
     // for spock
     testImplementation platform(libs.groovy_bom)

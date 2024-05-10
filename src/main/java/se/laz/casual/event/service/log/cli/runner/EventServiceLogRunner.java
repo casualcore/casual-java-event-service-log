@@ -7,6 +7,8 @@
 package se.laz.casual.event.service.log.cli.runner;
 
 import se.laz.casual.event.service.log.cli.CommandRunner;
+import se.laz.casual.event.service.log.cli.client.Client;
+import se.laz.casual.event.service.log.cli.client.log.ServiceLogger;
 
 import java.io.PrintWriter;
 import java.util.Objects;
@@ -35,6 +37,9 @@ public class EventServiceLogRunner implements CommandRunner<EventServiceLogParam
     {
         outputStream.print( printParams() );
         outputStream.flush();
+
+        ServiceLogger logger = ServiceLogger.newBuilder().eventServiceLogParams( this.getParams() ).build();
+        Client client = Client.newBuilder( ).eventServerUrl( params.getEventServerUrl() ).logger( logger ).build();
         return 0;
     }
 

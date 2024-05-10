@@ -13,13 +13,16 @@ quarkusPluginVersion = '3.10.0'
 quarkusPlatformGroupId = 'io.quarkus.platform'
 quarkusPlatformArtifactId = 'quarkus-bom'
 quarkusPlatformVersion = '3.10.0'
-
+def casualVersion = '3.2.39'
 
 ext.libs = [
         quarkus_platform: "${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}",
         quarkus_picocli : 'io.quarkus:quarkus-picocli',
         quarkus_arc     : 'io.quarkus:quarkus-arc',
         quarkus_junit5  : 'io.quarkus:quarkus-junit5',
+        casual_event_client : "se.laz.casual:casual-event-client:${casualVersion}",
+
+        casual_test : "se.laz.casual:casual-test:${casualVersion}",
 
         // for spock
         groovy_bom      : 'org.apache.groovy:groovy-bom:4.0.5',
