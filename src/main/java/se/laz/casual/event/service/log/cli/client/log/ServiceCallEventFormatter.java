@@ -32,7 +32,7 @@ public class ServiceCallEventFormatter
     private String formatEvent( ServiceCallEvent event )
     {
         appendColumn( event.getService() );
-        appendColumn( event.getParent().orElse( "" ) );
+        appendColumn( event.getParent().get() );
         appendColumn( event.getPid() );
         appendColumn( event.getExecution() );
         appendColumn( event.getTransactionId() );

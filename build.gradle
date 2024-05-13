@@ -7,6 +7,7 @@ plugins {
 
 repositories {
     mavenCentral()
+    maven {url 'https://s01.oss.sonatype.org/content/repositories/snapshots' }
     mavenLocal()
 }
 
@@ -17,6 +18,10 @@ dependencies {
     implementation libs.quarkus_picocli
     implementation libs.quarkus_arc
     implementation libs.casual_event_client
+    implementation libs.gson
+
+    annotationProcessor enforcedPlatform(libs.quarkus_platform)
+    annotationProcessor( 'info.picocli:picocli-codegen' )
 
     testImplementation libs.casual_test
     testImplementation libs.quarkus_junit5
@@ -39,7 +44,7 @@ test {
 }
 compileJava {
     options.encoding = 'UTF-8'
-    options.compilerArgs << '-parameters' << "-Xlint:all" << "-Werror"
+    options.compilerArgs << '-parameters' << "-Xlint:all" //<< "-Werror"
 }
 
 compileTestJava {

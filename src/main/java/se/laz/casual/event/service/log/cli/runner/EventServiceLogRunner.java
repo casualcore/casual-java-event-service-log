@@ -6,6 +6,7 @@
 
 package se.laz.casual.event.service.log.cli.runner;
 
+import io.quarkus.runtime.Quarkus;
 import se.laz.casual.event.service.log.cli.CommandRunner;
 import se.laz.casual.event.service.log.cli.client.Client;
 import se.laz.casual.event.service.log.cli.client.log.ServiceLogger;
@@ -40,6 +41,7 @@ public class EventServiceLogRunner implements CommandRunner<EventServiceLogParam
 
         ServiceLogger logger = ServiceLogger.newBuilder().eventServiceLogParams( this.getParams() ).build();
         Client client = Client.newBuilder( ).eventServerUrl( params.getEventServerUrl() ).logger( logger ).build();
+        Quarkus.waitForExit();
         return 0;
     }
 

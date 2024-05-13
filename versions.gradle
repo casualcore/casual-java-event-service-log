@@ -13,7 +13,8 @@ quarkusPluginVersion = '3.10.0'
 quarkusPlatformGroupId = 'io.quarkus.platform'
 quarkusPlatformArtifactId = 'quarkus-bom'
 quarkusPlatformVersion = '3.10.0'
-def casualVersion = '3.2.39'
+def casualVersion = '3.2.40-event-server-client-test-additions-SNAPSHOT'
+def gson_version = '2.10.1'
 
 ext.libs = [
         quarkus_platform: "${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}",
@@ -21,6 +22,8 @@ ext.libs = [
         quarkus_arc     : 'io.quarkus:quarkus-arc',
         quarkus_junit5  : 'io.quarkus:quarkus-junit5',
         casual_event_client : "se.laz.casual:casual-event-client:${casualVersion}",
+
+        gson: "com.google.code.gson:gson:${gson_version}",
 
         casual_test : "se.laz.casual:casual-test:${casualVersion}",
 

@@ -52,11 +52,13 @@ class ServiceLoggerTest extends Specification
             .withOrder(order1)
             .build()
 
+    TestParams params
+
     def setup()
     {
         logFile = Files.createTempFile( "stats", "log" ).toFile(  )
 
-        TestParams params = new TestParams()
+        params = new TestParams()
         params.logFile = logFile
 
         instance = ServiceLogger.newBuilder()
@@ -66,6 +68,7 @@ class ServiceLoggerTest extends Specification
 
     def "Write event to log file."()
     {
+        given:
         String expected = "test1|parent|123|"+ PrettyPrinter.casualStringify( execution1 )+"|null:null:0|1713184496123456|1713184504123456|5|OK|C" + System.lineSeparator(  )
 
         when:
@@ -74,6 +77,29 @@ class ServiceLoggerTest extends Specification
 
         then:
         fileContents == expected
+    }
+
+    def "Write event to existing log file, appends"()
+    {
+        given:
+        String expected1 = "test1|parent|123|"+ PrettyPrinter.casualStringify( execution1 )+"|null:null:0|1713184496123456|1713184504123456|5|OK|C" + System.lineSeparator(  )
+        String expected2 = expected1 + expected1
+
+        when:
+        ServiceLogger logger = ServiceLogger.newBuilder(  ).eventServiceLogParams( params ).build(  )
+        logger.logEvent( event )
+        String fileContents = new String( logFile.getBytes(  ) )
+
+        then:
+        fileContents == expected1
+
+        when:
+        logger = ServiceLogger.newBuilder(  ).eventServiceLogParams( params ).build(  )
+        logger.logEvent( event )
+        String fileContents2 = new String( logFile.getBytes(  ) )
+
+        then:
+        fileContents2 == expected2
     }
 
     def "Write event null, throws NullPointerException."()

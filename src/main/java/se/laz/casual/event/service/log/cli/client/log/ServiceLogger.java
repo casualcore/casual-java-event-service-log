@@ -38,7 +38,7 @@ public class ServiceLogger
             {
                 file.createNewFile();
             }
-            return StreamEncoder.toPrintWriter( new PrintStream( new FileOutputStream( file ) ) );
+            return StreamEncoder.toPrintWriter( new PrintStream( new FileOutputStream( file, true ) ) );
         }
         catch( IOException e )
         {

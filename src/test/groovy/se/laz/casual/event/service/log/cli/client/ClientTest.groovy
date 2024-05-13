@@ -160,9 +160,10 @@ class ClientTest extends Specification
 
         when:
         server.shutdown(  )
+        Thread.sleep( 1000 )
 
         then:
-        noExceptionThrown(  ) //TODO: CK 2024-05-10. Change when fixed to: thrown EventServerConnectionException
+        noExceptionThrown() //TODO: CK 2024-05-10. Change when fixed to: thrown EventServerConnectionException
 
         cleanup:
         server.shutdown(  )
