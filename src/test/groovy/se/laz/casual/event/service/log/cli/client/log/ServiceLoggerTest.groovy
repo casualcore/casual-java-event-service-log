@@ -11,6 +11,7 @@ import se.laz.casual.api.util.PrettyPrinter
 import se.laz.casual.event.Order
 import se.laz.casual.event.ServiceCallEvent
 import se.laz.casual.event.service.log.cli.runner.EventServiceLogParams
+import spock.lang.IgnoreIf
 import spock.lang.Specification
 
 import javax.transaction.xa.Xid
@@ -19,6 +20,8 @@ import java.time.Instant
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.regex.Pattern
+
+import static java.nio.file.StandardCopyOption.ATOMIC_MOVE
 
 class ServiceLoggerTest extends Specification
 {
@@ -109,6 +112,36 @@ class ServiceLoggerTest extends Specification
 
         then:
         thrown NullPointerException
+    }
+
+    @IgnoreIf( {os.windows} )
+    def "Write event to log, move file and restart logger, writes to new file."()
+    {
+        given:
+        String expected1 = "test1|parent|123|"+ PrettyPrinter.casualStringify( execution1 )+"|null:null:0|1713184496123456|1713184504123456|5|OK|C" + System.lineSeparator(  )
+        String expected2 = expected1 + expected1
+
+        when: "log file is written to and rotated, subsequent writes still update but in the new location."
+        instance.logEvent( event )
+
+        File rotatedLogFile = Files.createTempFile( "stats", "logrotated" ).toFile(  )
+        Files.move( logFile.toPath(  ), rotatedLogFile.toPath(  ), ATOMIC_MOVE )
+
+        instance.logEvent( event )
+        String rotatedLogFileContents = new String( rotatedLogFile.getBytes(  ) )
+
+        then:
+        rotatedLogFileContents == expected2
+
+        when:
+        instance.reload()
+        instance.logEvent( event )
+        String logFileContents = new String( logFile.getBytes(  ) )
+        String rotatedLogFileContents2 = new String( rotatedLogFile.getBytes(  ) )
+
+        then:
+        rotatedLogFileContents2 == expected2
+        logFileContents == expected1
     }
 
     class TestParams implements EventServiceLogParams

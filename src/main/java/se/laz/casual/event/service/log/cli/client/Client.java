@@ -128,7 +128,7 @@ public class Client
                                 logger.logEvent( e );
                                 System.out.println( "Received: " + e );
                             } )
-                            .withConnectionObserver( () -> { System.out.println( "Closed." );throw new EventServerConnectionException( "Connection to event server closed." ); } )
+                            .withConnectionObserver( (eventClient) -> { System.out.println( "Closed." );throw new EventServerConnectionException( "Connection to event server closed." ); } )
                             .build();
                     eventClient.connect().get();
                 }

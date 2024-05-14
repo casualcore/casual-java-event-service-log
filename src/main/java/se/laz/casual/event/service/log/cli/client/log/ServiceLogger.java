@@ -21,7 +21,9 @@ public class ServiceLogger
 {
     private final EventServiceLogParams eventServiceLogParams;
     private final String delimiter;
-    private final PrintWriter fileWriter;
+    private PrintWriter fileWriter;
+
+    private final Object fileWriterLock = new Object();
 
     private ServiceLogger( Builder builder )
     {
@@ -83,7 +85,23 @@ public class ServiceLogger
     public void logEvent( ServiceCallEvent event )
     {
         Objects.requireNonNull( event, "Event is null." );
-        fileWriter.println( ServiceCallEventFormatter.format( event, delimiter ) );
+        synchronized( fileWriterLock )
+        {
+            fileWriter.println( ServiceCallEventFormatter.format( event, delimiter ) );
+        }
+    }
+
+    /**
+     * Reload the log file. Used, for example, to allow for log rotation.
+     */
+    public void reload()
+    {
+        synchronized( fileWriterLock )
+        {
+            this.fileWriter.flush();
+            this.fileWriter.close();
+            this.fileWriter = initialiseFileWriter( eventServiceLogParams.getLogFile() );
+        }
     }
 
     public static Builder newBuilder()
