@@ -10,7 +10,6 @@ import se.laz.casual.api.flags.ErrorState
 import se.laz.casual.event.Order
 import se.laz.casual.event.ServiceCallEvent
 import se.laz.casual.event.client.EventClient
-import se.laz.casual.event.service.log.cli.client.log.ServiceLogger
 import se.laz.casual.event.service.log.cli.internal.EventServerConnectionException
 import se.laz.casual.test.CasualEmbeddedServer
 import spock.lang.Shared
@@ -74,14 +73,14 @@ class ClientTest extends Specification
     def "Create then get"()
     {
         given:
-        ServiceLogger logger = Mock(ServiceLogger)
+        EventHandler handler = Mock()
 
         when:
-        Client instance = Client.newBuilder().eventServerUrl( eventServerUrl ).logger( logger ).build()
+        Client instance = Client.newBuilder().eventServerUrl( eventServerUrl ).eventHandler( handler ).build()
 
         then:
         instance.getEventServerUrl() == eventServerUrl
-        instance.getLogger() == logger
+        instance.getEventHandler() == handler
         instance.getEventClient(  ) != null
     }
 
@@ -90,7 +89,7 @@ class ClientTest extends Specification
         when:
         Client.newBuilder()
             .eventServerUrl( _url )
-            .logger( _logger )
+            .eventHandler( _handler )
             .eventClient( _client  )
         .build()
 
@@ -98,19 +97,19 @@ class ClientTest extends Specification
         thrown NullPointerException
 
         where:
-        _url           | _logger        | _client
-        null           | Mock( ServiceLogger ) | Mock( EventClient )
-        eventServerUrl | null           | Mock( EventClient )
+        _url           | _handler             | _client
+        null           | Mock( EventHandler ) | Mock( EventClient )
+        eventServerUrl | null                 | Mock( EventClient )
     }
 
     def "Connect to event server and receive events."()
     {
         given:
-        ServiceLogger logger = Mock( ServiceLogger )
-        Client instance = Client.newBuilder().eventServerUrl( eventServerUrl ).logger( logger ).build(  )
+        EventHandler handler = Mock()
+        Client instance = Client.newBuilder().eventServerUrl( eventServerUrl ).eventHandler( handler ).build()
 
         CountDownLatch latch = new CountDownLatch( 2 )
-        2* logger.logEvent( event ) >> { latch.countDown(  ) }
+        2* handler.notify( event ) >> { latch.countDown(  ) }
 
         when:
         embeddedServer.publishEvent( event )
@@ -127,10 +126,10 @@ class ClientTest extends Specification
     def "Connect to non existent server, throws EventServerConnectionException"()
     {
         given:
-        ServiceLogger logger = Mock(ServiceLogger)
+        EventHandler handler = Mock()
 
         when:
-        Client.newBuilder().eventServerUrl( URI.create( "http://localhost:12345" ) ).logger( logger ).build(  )
+        Client.newBuilder().eventServerUrl( URI.create( "http://localhost:12345" ) ).eventHandler( handler ).build()
 
         then:
         thrown EventServerConnectionException
@@ -139,17 +138,17 @@ class ClientTest extends Specification
     def "Client connects, received event, shutdown event server, exception thrown."()
     {
         given:
-        ServiceLogger logger = Mock( ServiceLogger )
+        EventHandler handler = Mock()
         CasualEmbeddedServer server = CasualEmbeddedServer.newBuilder()
                 .eventServerEnabled( true )
                 .build(  )
         server.start(  )
 
         URI url = URI.create("http://localhost:" + server.getEventServerPort(  ).get() )
-        Client instance = Client.newBuilder().eventServerUrl( url ).logger( logger ).build(  )
+        Client instance = Client.newBuilder().eventServerUrl( url ).eventHandler( handler ).build(  )
 
         CountDownLatch latch = new CountDownLatch( 1 )
-        1* logger.logEvent( event ) >> { latch.countDown(  ) }
+        1* handler.notify( event ) >> { latch.countDown(  ) }
 
         when:
         server.publishEvent( event )

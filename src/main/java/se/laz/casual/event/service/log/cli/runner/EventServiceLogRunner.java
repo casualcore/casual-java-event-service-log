@@ -9,6 +9,7 @@ package se.laz.casual.event.service.log.cli.runner;
 import io.quarkus.runtime.Quarkus;
 import se.laz.casual.event.service.log.cli.CommandRunner;
 import se.laz.casual.event.service.log.cli.client.Client;
+import se.laz.casual.event.service.log.cli.client.EventHandler;
 import se.laz.casual.event.service.log.cli.client.log.LogRotateHandler;
 import se.laz.casual.event.service.log.cli.client.log.ServiceLogger;
 
@@ -41,8 +42,13 @@ public class EventServiceLogRunner implements CommandRunner<EventServiceLogParam
         outputStream.flush();
 
         ServiceLogger logger = ServiceLogger.newBuilder().eventServiceLogParams( this.getParams() ).build();
-        LogRotateHandler handler = LogRotateHandler.newBuilder().serviceLogger( logger ).build();
-        Client client = Client.newBuilder( ).eventServerUrl( params.getEventServerUrl() ).logger( logger ).build();
+        LogRotateHandler.newBuilder().serviceLogger( logger ).build();
+        EventHandler eventHandler = EventHandler.newBuilder().serviceLogger( logger )
+                .filterInclusive( this.getParams().getLogFilterInclusive().orElse( null ) )
+                .filterExclusive( this.getParams().getLogFilterExclusive().orElse( null ) )
+                .build();
+        Client client = Client.newBuilder( ).eventServerUrl( params.getEventServerUrl() )
+                .eventHandler( eventHandler ).build();
         Quarkus.waitForExit();
         return 0;
     }
@@ -54,11 +60,11 @@ public class EventServiceLogRunner implements CommandRunner<EventServiceLogParam
                 .append( "--delimiter: " ).append( params.getLogColumnDelimiter() ).append( System.lineSeparator() );
 
         builder.append( "--filter-inclusive: " );
-        params.getLogFilterExclusive().ifPresent( (p) -> builder.append( p.pattern() ) );
+        params.getLogFilterInclusive().ifPresent( (p) -> builder.append( p.pattern() ) );
         builder.append( System.lineSeparator() );
 
         builder.append( "--filter-exclusive: " );
-        params.getLogFilterExclusive().ifPresent( (p) -> builder.append( params.getLogFilterExclusive() ) );
+        params.getLogFilterExclusive().ifPresent( (p) -> builder.append( p.pattern() ) );
         builder.append( System.lineSeparator() );
 
         builder.append( "--eventServerUrl: " ).append( params.getEventServerUrl() )

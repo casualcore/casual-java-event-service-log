@@ -27,8 +27,6 @@ class ServiceLoggerTest extends Specification
 {
     File logFile
 
-    String delimiter = "|"
-
     ServiceLogger instance
 
     String service1 = "test1"
@@ -42,18 +40,7 @@ class ServiceLoggerTest extends Specification
 
     Instant start1 = ZonedDateTime.parse( "2024-04-15T12:34:56.123456Z", DateTimeFormatter.ISO_ZONED_DATE_TIME).toInstant()
     Instant end1 = ZonedDateTime.parse( "2024-04-15T12:35:04.123456Z", DateTimeFormatter.ISO_ZONED_DATE_TIME).toInstant()
-    ServiceCallEvent event = ServiceCallEvent.createBuilder(  )
-            .withService(service1)
-            .withParent(parent1)
-            .withPID(pid1)
-            .withExecution(execution1)
-            .withTransactionId(transactionId1)
-            .withPending( pending1 )
-            .withStart( start1 )
-            .withEnd( end1 )
-            .withCode(code1)
-            .withOrder(order1)
-            .build()
+    ServiceCallEvent event = createEvent( service1 )
 
     TestParams params
 
@@ -73,6 +60,21 @@ class ServiceLoggerTest extends Specification
     {
         given:
         String expected = "test1|parent|123|"+ PrettyPrinter.casualStringify( execution1 )+"|null:null:0|1713184496123456|1713184504123456|5|OK|C" + System.lineSeparator(  )
+
+        when:
+        instance.logEvent( event )
+        String fileContents = new String( logFile.getBytes(  ) )
+
+        then:
+        fileContents == expected
+    }
+
+    def "Write event to log file, delimiter ~"()
+    {
+        given:
+        params.logColumnDelimiter = "~"
+        instance = ServiceLogger.newBuilder(  ).eventServiceLogParams( params ).build(  )
+        String expected = "test1~parent~123~"+ PrettyPrinter.casualStringify( execution1 )+"~null:null:0~1713184496123456~1713184504123456~5~OK~C" + System.lineSeparator(  )
 
         when:
         instance.logEvent( event )
@@ -176,5 +178,21 @@ class ServiceLoggerTest extends Specification
         {
             return Optional.ofNullable( logFilterExclusive )
         }
+    }
+
+    ServiceCallEvent createEvent( String serviceName )
+    {
+        return ServiceCallEvent.createBuilder(  )
+                .withService(serviceName)
+                .withParent(parent1)
+                .withPID(pid1)
+                .withExecution(execution1)
+                .withTransactionId(transactionId1)
+                .withPending( pending1 )
+                .withStart( start1 )
+                .withEnd( end1 )
+                .withCode(code1)
+                .withOrder(order1)
+                .build()
     }
 }
