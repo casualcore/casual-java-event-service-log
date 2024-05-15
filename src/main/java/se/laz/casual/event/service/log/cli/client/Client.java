@@ -11,6 +11,7 @@ import se.laz.casual.event.service.log.cli.internal.EventServerConnectionExcepti
 
 import java.net.URI;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 
 public class Client
 {
@@ -18,12 +19,14 @@ public class Client
     private final EventClient eventClient;
     private final URI eventServerUrl;
     private final EventHandler eventHandler;
+    private final CompletableFuture<Boolean> disconnected;
 
     public Client( Builder builder )
     {
         this.eventClient = builder.eventClient;
         this.eventServerUrl = builder.eventServerUrl;
         this.eventHandler = builder.eventHandler;
+        this.disconnected = builder.disconnected;
     }
 
     public EventClient getEventClient()
@@ -59,6 +62,11 @@ public class Client
         }
     }
 
+    public void waitForDisconnect()
+    {
+        this.disconnected.join();
+    }
+
     public static Builder newBuilder()
     {
         return new Builder();
@@ -69,6 +77,7 @@ public class Client
         private EventClient eventClient;
         private URI eventServerUrl;
         private EventHandler eventHandler;
+        private CompletableFuture<Boolean> disconnected = new CompletableFuture<>();
 
         public Builder()
         {
@@ -103,7 +112,7 @@ public class Client
                     eventClient = EventClient.createBuilder().withHost( eventServerUrl.getHost() )
                             .withPort( eventServerUrl.getPort() )
                             .withEventObserver( eventHandler )
-                            .withConnectionObserver( (eventClient) -> { System.out.println( "Closed." );throw new EventServerConnectionException( "Connection to event server closed." ); } )
+                            .withConnectionObserver( (e)-> disconnected.complete( true ) )
                             .build();
                     eventClient.connect().get();
                 }

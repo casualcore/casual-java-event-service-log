@@ -6,9 +6,7 @@
 
 package se.laz.casual.event.service.log.cli.runner;
 
-import io.quarkus.runtime.Quarkus;
 import se.laz.casual.event.service.log.cli.CommandRunner;
-import se.laz.casual.event.service.log.cli.client.Client;
 import se.laz.casual.event.service.log.cli.client.EventHandler;
 import se.laz.casual.event.service.log.cli.client.log.LogRotateHandler;
 import se.laz.casual.event.service.log.cli.client.log.ServiceLogger;
@@ -20,6 +18,7 @@ public class EventServiceLogRunner implements CommandRunner<EventServiceLogParam
 {
     private final EventServiceLogParams params;
     private final PrintWriter outputStream;
+    private final ClientAutoReconnector clientAutoReconnector = new ClientAutoReconnector( this, 30000 );
 
     public EventServiceLogRunner( EventServiceLogParams params, PrintWriter outputStream )
     {
@@ -35,22 +34,37 @@ public class EventServiceLogRunner implements CommandRunner<EventServiceLogParam
         return this.params;
     }
 
+    public PrintWriter getOutputStream()
+    {
+        return outputStream;
+    }
+
     @Override
     public int run()
     {
         outputStream.print( printParams() );
         outputStream.flush();
 
+        ServiceLogger logger = initialiseLogger();
+        EventHandler handler = initialiseEventHandler( logger );
+        clientAutoReconnector.maintainClientConnection( handler );
+
+        return 0;
+    }
+
+    private ServiceLogger initialiseLogger()
+    {
         ServiceLogger logger = ServiceLogger.newBuilder().eventServiceLogParams( this.getParams() ).build();
         LogRotateHandler.newBuilder().serviceLogger( logger ).build();
-        EventHandler eventHandler = EventHandler.newBuilder().serviceLogger( logger )
+        return logger;
+    }
+
+    private EventHandler initialiseEventHandler(ServiceLogger logger)
+    {
+        return EventHandler.newBuilder().serviceLogger( logger )
                 .filterInclusive( this.getParams().getLogFilterInclusive().orElse( null ) )
                 .filterExclusive( this.getParams().getLogFilterExclusive().orElse( null ) )
                 .build();
-        Client client = Client.newBuilder( ).eventServerUrl( params.getEventServerUrl() )
-                .eventHandler( eventHandler ).build();
-        Quarkus.waitForExit();
-        return 0;
     }
 
     private StringBuilder printParams()
