@@ -159,10 +159,10 @@ class ClientTest extends Specification
 
         when:
         server.shutdown(  )
-        Thread.sleep( 1000 )
+        instance.waitForDisconnect()
 
         then:
-        noExceptionThrown() //TODO: CK 2024-05-10. Change when fixed to: thrown EventServerConnectionException
+        noExceptionThrown()
 
         cleanup:
         server.shutdown(  )

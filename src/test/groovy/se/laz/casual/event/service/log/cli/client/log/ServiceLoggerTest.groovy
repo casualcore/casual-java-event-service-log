@@ -10,7 +10,7 @@ import se.laz.casual.api.flags.ErrorState
 import se.laz.casual.api.util.PrettyPrinter
 import se.laz.casual.event.Order
 import se.laz.casual.event.ServiceCallEvent
-import se.laz.casual.event.service.log.cli.runner.EventServiceLogParams
+import se.laz.casual.event.service.log.cli.runner.TestEventServiceLogParams
 import spock.lang.IgnoreIf
 import spock.lang.Specification
 
@@ -19,7 +19,6 @@ import java.nio.file.Files
 import java.time.Instant
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
-import java.util.regex.Pattern
 
 import static java.nio.file.StandardCopyOption.ATOMIC_MOVE
 
@@ -42,13 +41,13 @@ class ServiceLoggerTest extends Specification
     Instant end1 = ZonedDateTime.parse( "2024-04-15T12:35:04.123456Z", DateTimeFormatter.ISO_ZONED_DATE_TIME).toInstant()
     ServiceCallEvent event = createEvent( service1 )
 
-    TestParams params
+    TestEventServiceLogParams params
 
     def setup()
     {
         logFile = Files.createTempFile( "stats", "log" ).toFile(  )
 
-        params = new TestParams()
+        params = new TestEventServiceLogParams()
         params.logFile = logFile
 
         instance = ServiceLogger.newBuilder()
@@ -144,40 +143,6 @@ class ServiceLoggerTest extends Specification
         then:
         rotatedLogFileContents2 == expected2
         logFileContents == expected1
-    }
-
-    class TestParams implements EventServiceLogParams
-    {
-        URI eventServerUrl = null
-        File logFile = new File( "statistics.log" )
-        String logColumnDelimiter = "|"
-        Pattern logFilterInclusive = null
-        Pattern logFilterExclusive = null
-
-        TestParams()
-        {
-
-        }
-
-        TestParams( File file, String delimiter, Pattern include, Pattern exclude )
-        {
-            this.logFile = file
-            this.logColumnDelimiter = delimiter
-            this.logFilterInclusive = include
-            this.logFilterExclusive = exclude
-        }
-
-        @Override
-        Optional<Pattern> getLogFilterInclusive()
-        {
-            return Optional.ofNullable( logFilterInclusive )
-        }
-
-        @Override
-        Optional<Pattern> getLogFilterExclusive()
-        {
-            return Optional.ofNullable( logFilterExclusive )
-        }
     }
 
     ServiceCallEvent createEvent( String serviceName )
