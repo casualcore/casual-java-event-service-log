@@ -87,6 +87,8 @@ public class Main implements Callable<Integer>, EventServiceLogParams
                 .execute( args );
     }
 
+    //2024-05-15 CK - This is a command line app, it is meant to write to System.out and System.err.
+    @SuppressWarnings( "squid:S106" )
     static CommandLine newCommandLine( Main instance )
     {
         return new CommandLine( instance )

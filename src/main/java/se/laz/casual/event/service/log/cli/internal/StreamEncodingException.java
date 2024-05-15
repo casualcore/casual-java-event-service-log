@@ -6,7 +6,7 @@
 
 package se.laz.casual.event.service.log.cli.internal;
 
-public class StreamEncodingException extends RuntimeException
+public class StreamEncodingException extends EventServiceLoggerException
 {
     private static final long serialVersionUID = 1L;
 

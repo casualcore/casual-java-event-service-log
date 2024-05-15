@@ -7,6 +7,7 @@
 package se.laz.casual.event.service.log.cli.client.log;
 
 import se.laz.casual.event.ServiceCallEvent;
+import se.laz.casual.event.service.log.cli.internal.EventServiceLoggerException;
 import se.laz.casual.event.service.log.cli.internal.StreamEncoder;
 import se.laz.casual.event.service.log.cli.runner.EventServiceLogParams;
 
@@ -32,19 +33,26 @@ public class ServiceLogger
         this.fileWriter = initialiseFileWriter( eventServiceLogParams.getLogFile() );
     }
 
+    /**
+     * Initialise the print writer using the file provided.
+     * If the file already exists it will append.
+     * If the file does not exist it will be created.
+     *
+     * @param file for PrintWriter to write to.
+     * @return PrintWriter wrapping the file provided.
+     */
+    //2024-05-15 CK - File#createNewFile boolean return ignored, as no action required, see javadoc above.
+    @SuppressWarnings( "squid:S899" )
     private PrintWriter initialiseFileWriter( File file )
     {
         try
         {
-            if( !file.exists() )
-            {
-                file.createNewFile();
-            }
+            file.createNewFile();
             return StreamEncoder.toPrintWriter( new PrintStream( new FileOutputStream( file, true ) ) );
         }
         catch( IOException e )
         {
-            throw new RuntimeException( e );
+            throw new EventServiceLoggerException( "Failed to open file.", e );
         }
     }
 

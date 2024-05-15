@@ -161,4 +161,14 @@ class ClientAutoReconnectorTest extends Specification
         count >= 1
     }
 
+    def "Immediately stop, returns without creating client."()
+    {
+        when:
+        instance.stop(  )
+        instance.maintainClientConnection( Mock(EventHandler) )
+
+        then:
+        noExceptionThrown(  )
+    }
+
 }

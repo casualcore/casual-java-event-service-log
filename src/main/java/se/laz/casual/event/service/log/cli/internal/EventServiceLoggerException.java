@@ -6,17 +6,26 @@
 
 package se.laz.casual.event.service.log.cli.internal;
 
-public class EventServerConnectionException extends EventServiceLoggerException
+public class EventServiceLoggerException extends RuntimeException
 {
     private static final long serialVersionUID = 1L;
 
-    public EventServerConnectionException( String message )
+    public EventServiceLoggerException()
+    {
+    }
+
+    public EventServiceLoggerException( String message )
     {
         super( message );
     }
 
-    public EventServerConnectionException( String message, Throwable cause )
+    public EventServiceLoggerException( String message, Throwable cause )
     {
         super( message, cause );
+    }
+
+    public EventServiceLoggerException( Throwable cause )
+    {
+        super( cause );
     }
 }

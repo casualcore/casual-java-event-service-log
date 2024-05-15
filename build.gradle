@@ -1,8 +1,15 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven { url 'https://repo.spring.io/plugins-release' }
+    }
+}
 plugins {
     id 'java'
     id 'io.quarkus'
     id 'jacoco'
     id 'groovy'
+    id("org.sonarqube") version "5.0.0.4638"
 }
 
 repositories {
@@ -49,4 +56,27 @@ compileJava {
 
 compileTestJava {
     options.encoding = 'UTF-8'
+}
+
+sonar {
+    properties {
+        properties["sonar.host.url"] = 'http://localhost:9000'
+        properties["sonar.verbose"] = "true"
+        properties['sonar.java.source'] = 17
+    }
+}
+
+test {
+    finalizedBy jacocoTestReport
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+}
+
+jacocoTestReport {
+    reports {
+        xml.required = true
+        csv.required = false
+    }
 }

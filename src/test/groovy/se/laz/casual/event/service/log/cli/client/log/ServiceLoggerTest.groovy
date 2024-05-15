@@ -145,6 +145,22 @@ class ServiceLoggerTest extends Specification
         logFileContents == expected1
     }
 
+    def "Reload without file move, continues to write to the same file."()
+    {
+        given:
+        String expected1 = "test1|parent|123|"+ PrettyPrinter.casualStringify( execution1 )+"|null:null:0|1713184496123456|1713184504123456|5|OK|C" + System.lineSeparator(  )
+        String expected2 = expected1 + expected1
+
+        when: "log file is written to and rotated, subsequent writes still update but in the new location."
+        instance.logEvent( event )
+        instance.reload()
+        instance.logEvent( event )
+        String logFileContents = new String( logFile.getBytes(  ) )
+
+        then:
+        logFileContents == expected2
+    }
+
     ServiceCallEvent createEvent( String serviceName )
     {
         return ServiceCallEvent.createBuilder(  )

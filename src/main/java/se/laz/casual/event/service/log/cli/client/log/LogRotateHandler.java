@@ -6,14 +6,13 @@
 
 package se.laz.casual.event.service.log.cli.client.log;
 
-import sun.misc.Signal;
-import sun.misc.SignalHandler;
-
 import java.util.Objects;
 
-public class LogRotateHandler implements SignalHandler
+//2024-05-15 CK - We have to use sun.misc.Signal. Other alternatives don't currently work fully.
+@SuppressWarnings( "squid:S1191" )
+public class LogRotateHandler implements sun.misc.SignalHandler
 {
-    public static final Signal SIGHUP = new Signal( "HUP" );
+    public static final sun.misc.Signal SIGHUP = new sun.misc.Signal( "HUP" );
     private final ServiceLogger serviceLogger;
 
     private LogRotateHandler( Builder builder )
@@ -32,7 +31,7 @@ public class LogRotateHandler implements SignalHandler
     }
 
     @Override
-    public void handle( Signal sig )
+    public void handle( sun.misc.Signal sig )
     {
         this.serviceLogger.reload();
     }
@@ -61,9 +60,9 @@ public class LogRotateHandler implements SignalHandler
             return handler;
         }
 
-        private void initialiseSun( SignalHandler handler )
+        private void initialiseSun( sun.misc.SignalHandler handler )
         {
-            Signal.handle( SIGHUP, handler );
+            sun.misc.Signal.handle( SIGHUP, handler );
         }
     }
 }

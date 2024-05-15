@@ -74,11 +74,11 @@ public class EventServiceLogRunner implements CommandRunner<EventServiceLogParam
                 .append( "--delimiter: " ).append( params.getLogColumnDelimiter() ).append( System.lineSeparator() );
 
         builder.append( "--filter-inclusive: " );
-        params.getLogFilterInclusive().ifPresent( (p) -> builder.append( p.pattern() ) );
+        params.getLogFilterInclusive().ifPresent( p -> builder.append( p.pattern() ) );
         builder.append( System.lineSeparator() );
 
         builder.append( "--filter-exclusive: " );
-        params.getLogFilterExclusive().ifPresent( (p) -> builder.append( p.pattern() ) );
+        params.getLogFilterExclusive().ifPresent( p -> builder.append( p.pattern() ) );
         builder.append( System.lineSeparator() );
 
         builder.append( "--eventServerUrl: " ).append( params.getEventServerUrl() )

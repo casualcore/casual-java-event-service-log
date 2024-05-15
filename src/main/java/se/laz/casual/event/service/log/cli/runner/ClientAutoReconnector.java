@@ -32,10 +32,12 @@ public class ClientAutoReconnector
 
     public void waitForConnection( )
     {
-        while( !connected.join() )
+        boolean done;
+        do
         {
-            //Just wait.
+            done = connected.join();
         }
+        while( !done );
     }
 
     public void maintainClientConnection( EventHandler eventHandler )

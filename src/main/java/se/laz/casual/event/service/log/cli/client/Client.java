@@ -79,7 +79,7 @@ public class Client
         private EventHandler eventHandler;
         private CompletableFuture<Boolean> disconnected = new CompletableFuture<>();
 
-        public Builder()
+        private Builder()
         {
         }
 
@@ -112,11 +112,16 @@ public class Client
                     eventClient = EventClient.createBuilder().withHost( eventServerUrl.getHost() )
                             .withPort( eventServerUrl.getPort() )
                             .withEventObserver( eventHandler )
-                            .withConnectionObserver( (e)-> disconnected.complete( true ) )
+                            .withConnectionObserver( e-> disconnected.complete( true ) )
                             .build();
                     eventClient.connect().get();
                 }
-                catch( Throwable t )
+                catch( InterruptedException e )
+                {
+                    Thread.currentThread().interrupt();
+                    throw new EventServerConnectionException( "Thread interupted during connection.", e );
+                }
+                catch( Exception t )
                 {
                     throw new EventServerConnectionException( "Failed to connect to event server at: " + eventServerUrl, t );
                 }
