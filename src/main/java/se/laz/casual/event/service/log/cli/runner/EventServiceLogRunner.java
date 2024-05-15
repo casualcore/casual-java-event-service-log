@@ -6,6 +6,9 @@
 
 package se.laz.casual.event.service.log.cli.runner;
 
+import se.laz.casual.event.ServiceCallEventStore;
+import se.laz.casual.event.ServiceCallEventStoreFactory;
+import se.laz.casual.event.client.EventObserver;
 import se.laz.casual.event.service.log.cli.CommandRunner;
 import se.laz.casual.event.service.log.cli.client.EventHandler;
 import se.laz.casual.event.service.log.cli.client.log.LogRotateHandler;
@@ -13,6 +16,9 @@ import se.laz.casual.event.service.log.cli.client.log.ServiceLogger;
 
 import java.io.PrintWriter;
 import java.util.Objects;
+import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class EventServiceLogRunner implements CommandRunner<EventServiceLogParams>
 {
@@ -45,9 +51,22 @@ public class EventServiceLogRunner implements CommandRunner<EventServiceLogParam
         outputStream.print( printParams() );
         outputStream.flush();
 
+        ServiceCallEventStore store = ServiceCallEventStoreFactory.getStore( UUID.randomUUID() );
+
         ServiceLogger logger = initialiseLogger();
         EventHandler handler = initialiseEventHandler( logger );
-        clientAutoReconnector.maintainClientConnection( handler );
+
+        EventObserver observer = store::put;
+
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        executorService.submit( ()-> {
+            while( true )
+            {
+                handler.notify( store.take() );
+            }
+        } );
+
+        clientAutoReconnector.maintainClientConnection( observer );
 
         return 0;
     }

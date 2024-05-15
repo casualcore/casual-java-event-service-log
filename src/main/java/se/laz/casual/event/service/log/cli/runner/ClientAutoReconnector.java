@@ -6,8 +6,8 @@
 
 package se.laz.casual.event.service.log.cli.runner;
 
+import se.laz.casual.event.client.EventObserver;
 import se.laz.casual.event.service.log.cli.client.Client;
-import se.laz.casual.event.service.log.cli.client.EventHandler;
 import se.laz.casual.event.service.log.cli.internal.EventServerConnectionException;
 
 import java.util.concurrent.CompletableFuture;
@@ -40,7 +40,7 @@ public class ClientAutoReconnector
         while( !done );
     }
 
-    public void maintainClientConnection( EventHandler eventHandler )
+    public void maintainClientConnection( EventObserver eventHandler )
     {
         while( !stop )
         {
