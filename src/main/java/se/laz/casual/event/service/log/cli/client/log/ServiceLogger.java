@@ -96,6 +96,7 @@ public class ServiceLogger
         synchronized( fileWriterLock )
         {
             fileWriter.println( ServiceCallEventFormatter.format( event, delimiter ) );
+            this.fileWriter.flush();
         }
     }
 
