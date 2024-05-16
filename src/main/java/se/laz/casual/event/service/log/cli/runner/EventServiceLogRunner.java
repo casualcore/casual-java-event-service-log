@@ -59,6 +59,7 @@ public class EventServiceLogRunner implements CommandRunner<EventServiceLogParam
 
         clientAutoReconnector.maintainClientConnection( store::put );
         Quarkus.waitForExit();
+        processor.stop();
         return 0;
     }
 

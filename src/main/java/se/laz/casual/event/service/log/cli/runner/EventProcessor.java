@@ -23,7 +23,6 @@ public class EventProcessor
     private final EventHandler handler;
 
     private boolean stop = false;
-    private boolean started = false;
 
     public EventProcessor( ServiceCallEventStore store, EventHandler handler )
     {

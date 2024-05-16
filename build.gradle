@@ -51,7 +51,11 @@ test {
 }
 compileJava {
     options.encoding = 'UTF-8'
-    options.compilerArgs << '-parameters' << "-Xlint:all" //<< "-Werror"
+    options.compilerArgs <<
+            "-Xlint:all" <<
+            "-Xlint:-processing" << //Turn off warning for missing annotation processors.
+            "-Werror" <<
+            '-parameters'
 }
 
 compileTestJava {
