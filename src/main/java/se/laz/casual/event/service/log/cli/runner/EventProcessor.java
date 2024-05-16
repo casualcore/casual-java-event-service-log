@@ -48,6 +48,6 @@ public class EventProcessor
     public void stop()
     {
         this.stop = true;
-        executorService.shutdown();
+        executorService.shutdownNow();
     }
 }
