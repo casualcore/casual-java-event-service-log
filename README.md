@@ -66,6 +66,11 @@ The resulting jar file will be located in `./build/casual-java-event-service-log
 
 Alternatively the uber-jar will be published to maven central and can be downloaded directly from there.
 
+e.g. 
+https://s01.oss.sonatype.org/content/repositories/snapshots/se/laz/casual/casual-java-event-service-log/0.0.1-SNAPSHOT/
+
+https://s01.oss.sonatype.org/content/repositories/snapshots/se/laz/casual/casual-java-event-service-log/0.0.1-SNAPSHOT/casual-java-event-service-log-0.0.1-20240516.131741-4.jar
+
 To run the application you can then run the jar, for example, like this, providing the necessary arguments are detailed above:
 
 ```shell

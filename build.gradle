@@ -20,6 +20,7 @@ repositories {
 }
 
 apply from: "$rootProject.projectDir/versions.gradle"
+apply from: "$rootProject.projectDir/publish.gradle"
 
 dependencies {
     implementation enforcedPlatform(libs.quarkus_platform)
