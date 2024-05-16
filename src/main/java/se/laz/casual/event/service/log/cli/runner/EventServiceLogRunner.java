@@ -6,9 +6,9 @@
 
 package se.laz.casual.event.service.log.cli.runner;
 
+import io.quarkus.runtime.Quarkus;
 import se.laz.casual.event.ServiceCallEventStore;
 import se.laz.casual.event.ServiceCallEventStoreFactory;
-import se.laz.casual.event.client.EventObserver;
 import se.laz.casual.event.service.log.cli.CommandRunner;
 import se.laz.casual.event.service.log.cli.client.EventHandler;
 import se.laz.casual.event.service.log.cli.client.log.LogRotateHandler;
@@ -17,14 +17,11 @@ import se.laz.casual.event.service.log.cli.client.log.ServiceLogger;
 import java.io.PrintWriter;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class EventServiceLogRunner implements CommandRunner<EventServiceLogParams>
 {
     private final EventServiceLogParams params;
     private final PrintWriter outputStream;
-    private final ClientAutoReconnector clientAutoReconnector = new ClientAutoReconnector( this, 30000 );
 
     public EventServiceLogRunner( EventServiceLogParams params, PrintWriter outputStream )
     {
@@ -56,18 +53,12 @@ public class EventServiceLogRunner implements CommandRunner<EventServiceLogParam
         ServiceLogger logger = initialiseLogger();
         EventHandler handler = initialiseEventHandler( logger );
 
-        EventObserver observer = store::put;
+        EventProcessor processor = new EventProcessor( store, handler );
 
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
-        executorService.submit( ()-> {
-            while( true )
-            {
-                handler.notify( store.take() );
-            }
-        } );
+        ClientAutoReconnector clientAutoReconnector = new ClientAutoReconnector( this, 30000 );
 
-        clientAutoReconnector.maintainClientConnection( observer );
-
+        clientAutoReconnector.maintainClientConnection( store::put );
+        Quarkus.waitForExit();
         return 0;
     }
 

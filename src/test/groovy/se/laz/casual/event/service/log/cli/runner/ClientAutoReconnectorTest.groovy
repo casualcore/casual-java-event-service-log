@@ -99,7 +99,7 @@ class ClientAutoReconnectorTest extends Specification
         executor.submit {instance.maintainClientConnection( handler ) }
         instance.waitForConnection()
         embeddedServer.publishEvent( event )
-        latch.await( 1, TimeUnit.SECONDS )
+        latch.await( 50, TimeUnit.MILLISECONDS )
 
         then:
         latch.getCount(  ) == 0
@@ -124,7 +124,7 @@ class ClientAutoReconnectorTest extends Specification
         while( latch.getCount(  ) != 0 )
         {
             embeddedServer.publishEvent( event )
-            latch.await( 1, TimeUnit.SECONDS )
+            latch.await( 50, TimeUnit.MILLISECONDS )
             count++
         }
 
@@ -152,7 +152,7 @@ class ClientAutoReconnectorTest extends Specification
         while( latch.getCount(  ) != 0 )
         {
             embeddedServer.publishEvent( event )
-            latch.await( 1, TimeUnit.SECONDS )
+            latch.await( 50, TimeUnit.MILLISECONDS )
             count++
         }
 
@@ -161,14 +161,25 @@ class ClientAutoReconnectorTest extends Specification
         count >= 1
     }
 
-    def "Immediately stop, returns without creating client."()
+    def "Immediately stop, fails IllegalStateException."()
     {
         when:
         instance.stop(  )
         instance.maintainClientConnection( Mock(EventHandler) )
 
         then:
-        noExceptionThrown(  )
+        thrown IllegalStateException
+    }
+
+    def "Run then stop, then run, fails IllegalStateException."()
+    {
+        when:
+        instance.maintainClientConnection( Mock(EventHandler) )
+        instance.stop()
+        instance.maintainClientConnection( Mock(EventHandler) )
+
+        then:
+        thrown IllegalStateException
     }
 
 }

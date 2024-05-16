@@ -60,7 +60,7 @@ class LogRotateHandlerTest extends Specification
 
         when:
         Signal.raise( LogRotateHandler.SIGHUP )
-        called.await( 1, TimeUnit.SECONDS )
+        called.await( 50, TimeUnit.MILLISECONDS )
 
         then:
         called.getCount() == 0
