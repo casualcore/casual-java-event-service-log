@@ -1,4 +1,6 @@
 pluginManagement {
+    def quarkusPluginId='io.quarkus'
+    def quarkusPluginVersion='3.10.0'
     repositories {
         mavenCentral()
         gradlePluginPortal()
