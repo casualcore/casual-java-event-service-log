@@ -56,7 +56,6 @@ class Client2Test extends Specification
         embeddedServer = CasualEmbeddedServer.newBuilder()
                 .eventServerEnabled( true )
                 .eventServerPort( 7774 )
-                .gracefulShutdownEnabled( true )
                 .build(  )
         embeddedServer.start(  )
 
@@ -71,7 +70,28 @@ class Client2Test extends Specification
         }
     }
 
-    def "Send some events."()
+    def "Send some events no restarting."()
+    {
+        System.out.println( "Connect to me.")
+        Thread.sleep( 10000 )
+        System.out.println( "Firing away...")
+
+        when:
+        Instant start = Instant.now()
+        for( int i=1; i<=2000; i++ )
+        {
+            embeddedServer.publishEvent( event )
+            Thread.sleep( 1000 )
+        }
+        Instant end = Instant.now()
+        System.out.println( "Duration" + InstantUtil.toDurationMicro( start, end ) )
+        Thread.sleep( 10000 )
+
+        then:
+        noExceptionThrown(  )
+    }
+
+    def "Send some events with restarting."()
     {
         System.out.println( "Connect to me.")
         Thread.sleep( 10000 )
