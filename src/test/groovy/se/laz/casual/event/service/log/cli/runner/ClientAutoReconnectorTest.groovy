@@ -71,7 +71,7 @@ class ClientAutoReconnectorTest extends Specification
                 .build(  )
         embeddedServer.start(  )
 
-        eventServerUrl = URI.create("http://localhost:" + embeddedServer.getEventServerPort(  ).get() )
+        eventServerUrl = URI.create("tcp://localhost:" + embeddedServer.getEventServerPort(  ).get() )
 
         params.eventServerUrl = eventServerUrl
         EventServiceLogRunner runner = new EventServiceLogRunner( params, toPrintWriter( System.out ) )

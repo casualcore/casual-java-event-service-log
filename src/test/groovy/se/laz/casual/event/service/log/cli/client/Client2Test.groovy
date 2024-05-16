@@ -59,7 +59,7 @@ class Client2Test extends Specification
                 .build(  )
         embeddedServer.start(  )
 
-        eventServerUrl = URI.create("http://localhost:" + embeddedServer.getEventServerPort(  ).get() )
+        eventServerUrl = URI.create("tcp://localhost:" + embeddedServer.getEventServerPort(  ).get() )
     }
 
     def cleanupSpec()

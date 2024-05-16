@@ -74,7 +74,7 @@ https://s01.oss.sonatype.org/content/repositories/snapshots/se/laz/casual/casual
 To run the application you can then run the jar, for example, like this, providing the necessary arguments are detailed above:
 
 ```shell
-java -jar <path-to/uber.jar> --eventServerUrl=http://<server>:<port>
+java -jar <path-to/uber.jar> --eventServerUrl=tcp://<server>:<port>
 ```
 
 ### Shell wrapper
@@ -95,12 +95,12 @@ chmod +x casual-java-event-service-log.sh
 
 Example output:
 ```shell
-$ ./casual-java-event-service-log.sh --eventServerUrl=http://127.0.0.1:7774
+$ ./casual-java-event-service-log.sh --eventServerUrl=tcp://127.0.0.1:7774
 --file: statistics.log
 --delimiter: |
 --filter-inclusive:
 --filter-exclusive:
---eventServerUrl: http://127.0.0.1:7774
+--eventServerUrl: tcp://127.0.0.1:7774
 Connected.
 ```
 
@@ -119,13 +119,13 @@ To stop the tool, just perform, `Ctrl+C`.
 The following is example output from running when the event server is initial not running:
 
 ```shell
-./casual-java-event-service-log.sh --eventServerUrl=http://127.0.0.1:7774
+./casual-java-event-service-log.sh --eventServerUrl=tcp://127.0.0.1:7774
 --file: statistics.log
 --delimiter: |
 --filter-inclusive:
 --filter-exclusive:
---eventServerUrl: http://127.0.0.1:7774
-Connection failed, retrying in 30000ms: Failed to connect to event server at: http://127.0.0.1:7774
+--eventServerUrl: tcp://127.0.0.1:7774
+Connection failed, retrying in 30000ms: Failed to connect to event server at: tcp://127.0.0.1:7774
 Connected.
 Disconnected, retrying in 30000ms.
 Connected.
@@ -173,7 +173,7 @@ ps -ef | grep casual-java-event-service-log | grep "java -jar"
 ```
 Output:
 ```shell
-ck        517785  517784  7 13:37 pts/2    00:00:01 java -jar ./casual-java-event-service-log-0.0.1-runner.jar --eventServerUrl=http://192.168.68.117:7774
+ck        517785  517784  7 13:37 pts/2    00:00:01 java -jar ./casual-java-event-service-log-0.0.1-runner.jar --eventServerUrl=tcp://192.168.68.117:7774
 ```
 
 Raise SIGHUP:

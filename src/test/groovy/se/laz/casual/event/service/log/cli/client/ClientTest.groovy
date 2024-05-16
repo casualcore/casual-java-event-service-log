@@ -59,7 +59,7 @@ class ClientTest extends Specification
                 .build(  )
         embeddedServer.start(  )
 
-        eventServerUrl = URI.create("http://localhost:" + embeddedServer.getEventServerPort(  ).get() )
+        eventServerUrl = URI.create("tcp://localhost:" + embeddedServer.getEventServerPort(  ).get() )
     }
 
     def cleanupSpec()
@@ -129,7 +129,7 @@ class ClientTest extends Specification
         EventHandler handler = Mock()
 
         when:
-        Client.newBuilder().eventServerUrl( URI.create( "http://localhost:12345" ) ).eventHandler( handler ).build()
+        Client.newBuilder().eventServerUrl( URI.create( "tcp://localhost:12345" ) ).eventHandler( handler ).build()
 
         then:
         thrown EventServerConnectionException
@@ -144,7 +144,7 @@ class ClientTest extends Specification
                 .build(  )
         server.start(  )
 
-        URI url = URI.create("http://localhost:" + server.getEventServerPort(  ).get() )
+        URI url = URI.create("tcp://localhost:" + server.getEventServerPort(  ).get() )
         Client instance = Client.newBuilder().eventServerUrl( url ).eventHandler( handler ).build(  )
 
         CountDownLatch latch = new CountDownLatch( 1 )

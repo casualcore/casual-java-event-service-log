@@ -14,7 +14,7 @@ import java.util.regex.Pattern
 
 class MainTest extends Specification
 {
-    @Shared String eUrl = "--eventServerUrl=http://event.casual.laz.se:7774"
+    @Shared String eUrl = "--eventServerUrl=tcp://event.casual.laz.se:7774"
 
     CommandLine commandLine
     Main instance = new Main()
@@ -53,8 +53,8 @@ class MainTest extends Specification
 
         where:
         desc                  | args                                                  | exUrl
-        "valid url no port"   | ["--eventServerUrl=http://events.casual.laz.se"]      | "http://events.casual.laz.se"
-        "valid url with port" | ["--eventServerUrl=http://events.casual.laz.se:7774"] | "http://events.casual.laz.se:7774"
+        "valid url no port"   | ["--eventServerUrl=tcp://events.casual.laz.se"]      | "tcp://events.casual.laz.se"
+        "valid url with port" | ["--eventServerUrl=tcp://events.casual.laz.se:7774"] | "tcp://events.casual.laz.se:7774"
     }
 
     def "Call with invalid event server uri throws ParameterException."()
