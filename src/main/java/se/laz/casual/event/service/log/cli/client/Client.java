@@ -7,6 +7,7 @@
 package se.laz.casual.event.service.log.cli.client;
 
 import se.laz.casual.event.client.EventClient;
+import se.laz.casual.event.client.EventObserver;
 import se.laz.casual.event.service.log.cli.internal.EventServerConnectionException;
 
 import java.net.URI;
@@ -18,7 +19,7 @@ public class Client
 
     private final EventClient eventClient;
     private final URI eventServerUrl;
-    private final EventHandler eventHandler;
+    private final EventObserver eventHandler;
     private final CompletableFuture<Boolean> disconnected;
 
     public Client( Builder builder )
@@ -39,7 +40,7 @@ public class Client
         return eventServerUrl;
     }
 
-    public EventHandler getEventHandler()
+    public EventObserver getEventHandler()
     {
         return eventHandler;
     }
@@ -76,7 +77,7 @@ public class Client
     {
         private EventClient eventClient;
         private URI eventServerUrl;
-        private EventHandler eventHandler;
+        private EventObserver eventHandler;
         private CompletableFuture<Boolean> disconnected = new CompletableFuture<>();
 
         private Builder()
@@ -95,7 +96,7 @@ public class Client
             return this;
         }
 
-        public Builder eventHandler( EventHandler handler )
+        public Builder eventHandler( EventObserver handler )
         {
             this.eventHandler = handler;
             return this;

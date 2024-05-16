@@ -7,6 +7,7 @@
 package se.laz.casual.event.service.log.cli.client
 
 import se.laz.casual.api.flags.ErrorState
+import se.laz.casual.api.util.time.InstantUtil
 import se.laz.casual.event.Order
 import se.laz.casual.event.ServiceCallEvent
 import se.laz.casual.test.CasualEmbeddedServer
@@ -55,6 +56,7 @@ class Client2Test extends Specification
         embeddedServer = CasualEmbeddedServer.newBuilder()
                 .eventServerEnabled( true )
                 .eventServerPort( 7774 )
+                .gracefulShutdownEnabled( true )
                 .build(  )
         embeddedServer.start(  )
 
@@ -71,12 +73,49 @@ class Client2Test extends Specification
 
     def "Send some events."()
     {
+        System.out.println( "Connect to me.")
+        Thread.sleep( 10000 )
+        System.out.println( "Firing away...")
+
         when:
-        for( int i=0; i<=20; i++ )
+        Instant start = Instant.now()
+        for( int i=1; i<=2000; i++ )
         {
             embeddedServer.publishEvent( event )
             Thread.sleep( 5000 )
+            if( i % 10 == 0 )
+            {
+                System.out.println( "shutting down.")
+                embeddedServer.shutdown(  )
+                Thread.sleep( 20000 )
+                embeddedServer.start(  )
+                System.out.println( "restarting." )
+            }
         }
+        Instant end = Instant.now()
+        System.out.println( "Duration" + InstantUtil.toDurationMicro( start, end ) )
+        Thread.sleep( 10000 )
+
+        then:
+        noExceptionThrown(  )
+    }
+
+    def "Send events fast."()
+    {
+        System.out.println( "Connect to me.")
+        Thread.sleep( 10000 )
+        System.out.println( "Firing away...")
+
+        when:
+        Instant start = Instant.now()
+        for( int i=1; i<=100000; i++ )
+        {
+            embeddedServer.publishEvent( event )
+            //Thread.sleep( 1 )
+        }
+        Instant end = Instant.now()
+        System.out.println( "Duration" + InstantUtil.toDurationMicro( start, end ) )
+        //Thread.sleep( 10000 )
 
         then:
         noExceptionThrown(  )

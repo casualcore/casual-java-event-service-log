@@ -114,7 +114,7 @@ class ClientTest extends Specification
         when:
         embeddedServer.publishEvent( event )
         embeddedServer.publishEvent( event )
-        latch.await( 1, TimeUnit.SECONDS )
+        latch.await( 50, TimeUnit.MILLISECONDS )
 
         then:
         latch.getCount(  ) == 0
@@ -135,7 +135,7 @@ class ClientTest extends Specification
         thrown EventServerConnectionException
     }
 
-    def "Client connects, received event, shutdown event server, exception thrown."()
+    def "Client connects, received event, shutdown event server, client disconnects."()
     {
         given:
         EventHandler handler = Mock()
@@ -152,7 +152,7 @@ class ClientTest extends Specification
 
         when:
         server.publishEvent( event )
-        latch.await( 1, TimeUnit.SECONDS )
+        latch.await( 50, TimeUnit.MILLISECONDS )
 
         then:
         latch.getCount(  ) == 0

@@ -80,3 +80,7 @@ jacocoTestReport {
         csv.required = false
     }
 }
+
+configurations.all {
+    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+}
