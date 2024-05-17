@@ -13,6 +13,7 @@ def quarkusPlatformArtifactId = 'quarkus-bom'
 def quarkusPlatformVersion = '3.10.0'
 def casualVersion = '3.2.41'
 def gson_version = '2.10.1'
+def netty_version = '4.1.109.Final'
 
 ext.libs = [
         quarkus_platform: "${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}",
@@ -22,6 +23,8 @@ ext.libs = [
         casual_event_client : "se.laz.casual:casual-event-client:${casualVersion}",
 
         gson: "com.google.code.gson:gson:${gson_version}",
+        netty : "io.netty:netty-all:${netty_version}",
+        netty_epoll: "io.netty:netty-transport-native-epoll:${netty_version}",
 
         casual_test : "se.laz.casual:casual-test:${casualVersion}",
 

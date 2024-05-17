@@ -28,6 +28,8 @@ dependencies {
     implementation libs.quarkus_arc
     implementation libs.casual_event_client
     implementation libs.gson
+    implementation libs.netty
+    implementation libs.netty_epoll
 
     annotationProcessor enforcedPlatform(libs.quarkus_platform)
     annotationProcessor( 'info.picocli:picocli-codegen' )
