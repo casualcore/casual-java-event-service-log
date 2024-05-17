@@ -46,9 +46,9 @@ publishing {
                     }
                 }
                 scm {
-                    connection = 'scm:git:ssh://github.com:casualcore/casual-java.git'
-                    developerConnection = 'scm:git:ssh://github.com:casualcore/casual-java.git'
-                    url = 'https://github.com/casualcore/casual-java'
+                    connection = 'scm:git:ssh://github.com:casualcore/casual-java-event-service-log.git'
+                    developerConnection = 'scm:git:ssh://github.com:casualcore/casual-java-event-service-log.git'
+                    url = 'https://github.com/casualcore/casual-java-event-service-log'
                 }
                 developers {
                     developer {

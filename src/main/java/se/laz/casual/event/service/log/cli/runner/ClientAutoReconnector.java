@@ -67,7 +67,7 @@ public class ClientAutoReconnector
             client = Client.newBuilder().eventServerUrl( eventServiceLogRunner.getParams().getEventServerUrl() )
                             .eventHandler( eventHandler ).build();
             connected.complete( true );
-            eventServiceLogRunner.getOutputStream().println( "Connected." );
+            eventServiceLogRunner.getOutputStream().println( "Connected to: " + eventServiceLogRunner.getParams().getEventServerUrl() );
             eventServiceLogRunner.getOutputStream().flush();
             client.waitForDisconnect();
             eventServiceLogRunner.getOutputStream().println( "Disconnected, retrying in " + backoff + "ms." );

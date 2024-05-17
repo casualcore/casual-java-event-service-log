@@ -129,7 +129,7 @@ class ClientTest extends Specification
         EventHandler handler = Mock()
 
         when:
-        Client.newBuilder().eventServerUrl( URI.create( "tcp://localhost:12345" ) ).eventHandler( handler ).build()
+        Client.newBuilder().eventServerUrl( URI.create( "tcp://127.0.0.1:12345" ) ).eventHandler( handler ).build()
 
         then:
         thrown EventServerConnectionException
