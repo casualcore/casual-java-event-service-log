@@ -4,11 +4,9 @@
  * This software is licensed under the MIT license, https://opensource.org/licenses/MIT
  */
 
-package se.laz.casual.event.service.log.cli.client;
+package se.laz.casual.event.service.log.cli.log;
 
 import se.laz.casual.event.ServiceCallEvent;
-import se.laz.casual.event.client.EventObserver;
-import se.laz.casual.event.service.log.cli.client.log.ServiceLogger;
 
 import java.util.Objects;
 import java.util.regex.Pattern;
@@ -17,7 +15,7 @@ import java.util.regex.Pattern;
  * Handle incoming events.
  * Applying necessary filtering prior to logging.
  */
-public class EventHandler implements EventObserver
+public class EventHandler
 {
     private final ServiceLogger serviceLogger;
     private final Pattern filterInclusive;
@@ -55,8 +53,7 @@ public class EventHandler implements EventObserver
                 '}';
     }
 
-    @Override
-    public void notify( ServiceCallEvent event )
+    public void handle( ServiceCallEvent event )
     {
         Objects.requireNonNull( event, "Event is null." );
         if( filterInclusive != null && !filterInclusive.matcher( event.getService() ).matches() )

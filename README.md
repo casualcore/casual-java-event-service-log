@@ -196,3 +196,16 @@ The `statistics.log` file continues to receive new updates whilst the `statistic
 events logged prior to raising the SIGHUP.
 
 The log file has therefore been successfully rotated with no missing event log entries.
+
+## Design
+
+The code is made up of four key components.
+
+* The client is responsible for maintaining a connection to the event server and receiving events, placing them in an event store for processing.
+* The event store processor is responsible for retrieving events from the event store, passing them on to the event handler.
+* The event handler is responsible for filtering the events and sending them to the logger.
+* The logger is responsible for formatting the events and saving them to the log file.
+
+This separation allows for incoming events received over the network to be quickly placed on a queue (event store) for further processing.
+Whilst the slower operation of writing to the log file will be queued, eventually all loggable events will be written to the log.
+This prevents the log writing from slowing down network reads which could cause new events to be rejected under high load.

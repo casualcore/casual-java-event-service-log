@@ -4,7 +4,9 @@
  * This software is licensed under the MIT license, https://opensource.org/licenses/MIT
  */
 
-package se.laz.casual.event.service.log.cli.internal;
+package se.laz.casual.event.service.log.cli.client;
+
+import se.laz.casual.event.service.log.cli.internal.EventServiceLoggerException;
 
 public class EventServerConnectionException extends EventServiceLoggerException
 {

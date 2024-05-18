@@ -4,7 +4,7 @@
  * This software is licensed under the MIT license, https://opensource.org/licenses/MIT
  */
 
-package se.laz.casual.event.service.log.cli.client.log;
+package se.laz.casual.event.service.log.cli.log;
 
 import se.laz.casual.event.ServiceCallEvent;
 import se.laz.casual.event.service.log.cli.internal.EventServiceLoggerException;
@@ -18,6 +18,9 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.Objects;
 
+/**
+ * Writes an event to the log file.
+ */
 public class ServiceLogger
 {
     private final EventServiceLogParams eventServiceLogParams;
@@ -62,27 +65,6 @@ public class ServiceLogger
     }
 
     @Override
-    public boolean equals( Object o )
-    {
-        if( this == o )
-        {
-            return true;
-        }
-        if( o == null || getClass() != o.getClass() )
-        {
-            return false;
-        }
-        ServiceLogger that = (ServiceLogger) o;
-        return Objects.equals( eventServiceLogParams, that.eventServiceLogParams );
-    }
-
-    @Override
-    public int hashCode()
-    {
-        return Objects.hash( eventServiceLogParams );
-    }
-
-    @Override
     public String toString()
     {
         return "ServiceLogger{" +
@@ -90,6 +72,10 @@ public class ServiceLogger
                 '}';
     }
 
+    /**
+     * Format the event and write to the log file.
+     * @param event to log.
+     */
     public void logEvent( ServiceCallEvent event )
     {
         Objects.requireNonNull( event, "Event is null." );

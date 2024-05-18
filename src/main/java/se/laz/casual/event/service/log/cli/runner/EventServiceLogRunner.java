@@ -10,14 +10,19 @@ import io.quarkus.runtime.Quarkus;
 import se.laz.casual.event.ServiceCallEventStore;
 import se.laz.casual.event.ServiceCallEventStoreFactory;
 import se.laz.casual.event.service.log.cli.CommandRunner;
-import se.laz.casual.event.service.log.cli.client.EventHandler;
-import se.laz.casual.event.service.log.cli.client.log.LogRotateHandler;
-import se.laz.casual.event.service.log.cli.client.log.ServiceLogger;
+import se.laz.casual.event.service.log.cli.log.EventHandler;
+import se.laz.casual.event.service.log.cli.log.LogRotateHandler;
+import se.laz.casual.event.service.log.cli.log.ServiceLogger;
 
 import java.io.PrintWriter;
 import java.util.Objects;
 import java.util.UUID;
 
+/**
+ * Runs the command based on the validated inputs provided.
+ *
+ * Input validation is performed prior this, by picocli.
+ */
 public class EventServiceLogRunner implements CommandRunner<EventServiceLogParams>
 {
     private final EventServiceLogParams params;
@@ -42,24 +47,36 @@ public class EventServiceLogRunner implements CommandRunner<EventServiceLogParam
         return outputStream;
     }
 
+    /**
+     * The commands execution entry point.
+     * <br/>
+     * Initialise based on input params.
+     * <br/>
+     * Establish a client connection is maintained continuously placing incoming events in a store for processing.
+     * <br/>
+     * Filter all incoming events from the store logging the remaining formatted events to the log file.
+     * @return exit code.
+     */
     @Override
     public int run()
     {
-        outputStream.print( printParams() );
+        outputStream.println( printParams() );
         outputStream.flush();
 
+        // Initialise event store, logger and event handler.
         ServiceCallEventStore store = ServiceCallEventStoreFactory.getStore( UUID.randomUUID() );
-
         ServiceLogger logger = initialiseLogger();
         EventHandler handler = initialiseEventHandler( logger );
 
-        EventProcessor processor = new EventProcessor( store, handler );
+        // Run event processor and establish client connection.
+        EventStoreProcessor storeProcessor = new EventStoreProcessor( store, handler );
+        ClientAutoReconnector clientAutoReconnector = new ClientAutoReconnector( store::put,this, 30000 );
 
-        ClientAutoReconnector clientAutoReconnector = new ClientAutoReconnector( this, 30000 );
-
-        clientAutoReconnector.maintainClientConnection( store::put );
         Quarkus.waitForExit();
-        processor.stop();
+
+        // Stop processing and disconnect client.
+        storeProcessor.stop();
+        clientAutoReconnector.stop();
         return 0;
     }
 

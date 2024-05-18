@@ -4,7 +4,7 @@
  * This software is licensed under the MIT license, https://opensource.org/licenses/MIT
  */
 
-package se.laz.casual.event.service.log.cli.client.log;
+package se.laz.casual.event.service.log.cli.log;
 
 import se.laz.casual.event.ServiceCallEvent;
 
@@ -12,6 +12,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Formatter for events.
+ */
 public class ServiceCallEventFormatter
 {
     private final String delimiter;
@@ -22,6 +25,13 @@ public class ServiceCallEventFormatter
         this.delimiter = delimiter;
     }
 
+    /**
+     * Format the event using the provided delimiter.
+     *
+     * @param event to format.
+     * @param delimiter to use when formatting.
+     * @return the formatted event.
+     */
     public static String format( ServiceCallEvent event, String delimiter )
     {
         Objects.requireNonNull( event, "Event is null." );

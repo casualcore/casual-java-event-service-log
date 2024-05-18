@@ -11,6 +11,9 @@ import java.net.URI;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
+/**
+ * Parameters for running the Event Service Log.
+ */
 public interface EventServiceLogParams
 {
     /**

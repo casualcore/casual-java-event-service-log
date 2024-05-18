@@ -9,24 +9,24 @@ package se.laz.casual.event.service.log.cli.runner
 import se.laz.casual.event.ServiceCallEvent
 import se.laz.casual.event.ServiceCallEventStore
 import se.laz.casual.event.ServiceCallEventStoreFactory
-import se.laz.casual.event.service.log.cli.client.EventHandler
+import se.laz.casual.event.service.log.cli.log.EventHandler
 import spock.lang.Specification
 
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
 
-class EventProcessorTest extends Specification
+class EventStoreProcessorTest extends Specification
 {
     EventHandler handler = Mock()
     UUID storeId = UUID.randomUUID(  )
     ServiceCallEventStore store = ServiceCallEventStoreFactory.getStore( storeId )
 
-    EventProcessor instance
+    EventStoreProcessor instance
 
     def setup()
     {
-        instance = new EventProcessor( store, handler )
+        instance = new EventStoreProcessor( store, handler )
     }
 
     def "Place item on the store, is processed."()
@@ -34,7 +34,7 @@ class EventProcessorTest extends Specification
         given:
         ServiceCallEvent event = Mock()
         CountDownLatch latch = new CountDownLatch(1)
-        1* handler.notify( event ) >> { latch.countDown(  ) }
+        1* handler.handle( event ) >> { latch.countDown(  ) }
 
         when:
         store.put( event )
@@ -50,7 +50,7 @@ class EventProcessorTest extends Specification
         instance.stop()
         ServiceCallEvent event = Mock()
         CountDownLatch latch = new CountDownLatch(1)
-        handler.notify( event ) >> { latch.countDown(  ) }
+        handler.handle( event ) >> { latch.countDown(  ) }
 
         when:
         store.put( event )
