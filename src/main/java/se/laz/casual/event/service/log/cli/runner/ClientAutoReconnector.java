@@ -70,7 +70,7 @@ public class ClientAutoReconnector
             eventServiceLogRunner.getOutputStream().println( "Connected to: " + eventServiceLogRunner.getParams().getEventServerUrl() );
             eventServiceLogRunner.getOutputStream().flush();
             client.waitForDisconnect();
-            eventServiceLogRunner.getOutputStream().println( "Disconnected, retrying in " + backoff + "ms." );
+            eventServiceLogRunner.getOutputStream().println( "Disconnected from: " + eventServiceLogRunner.getParams().getEventServerUrl() + ", retrying in " + backoff + "ms." );
             eventServiceLogRunner.getOutputStream().flush();
         }
         catch( EventServerConnectionException e )

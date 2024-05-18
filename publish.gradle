@@ -13,19 +13,30 @@ java {
     withSourcesJar()
 }
 
-//TODO: 2024-05-16 CK - Fix issue with enforced-platform prior to real publish to maven central.
+/**
+ * Suppress warning for enforced-platform based on quarkus guidelines:
+ *
+ * https://quarkus.io/guides/gradle-tooling#publishing-your-application
+ * "In order to make sure the right dependency versions are being used by Gradle,
+ * the BOM is declared as an enforcedPlatform in your build file. By default,
+ * the maven-publish plugin will prevent you from publishing your application due
+ * to this enforcedPlatform. This validation can be skipped by adding the following
+ * configuration in your build file".
+*/
 tasks.withType(GenerateModuleMetadata).configureEach {
-    // The value 'enforced-platform' is provided in the validation
-    // error message you got
     suppressedValidationErrors.add('enforced-platform')
 }
 
 publishing {
     publications {
         mavenJava( MavenPublication ) {
-            //from components.java
-            //TODO: 2024-05-16 CK - Fix issue with uberjar upload to real publish to maven central.
-            artifact 'build/casual-java-event-service-log-0.0.1-SNAPSHOT.jar'
+            from components.java
+            // Manually add the built uberjar to the artifacts for publishing with "uber-jar" classifier.
+            artifact( "build/casual-java-event-service-log-${version}.jar")
+            {
+                classifier 'uber-jar'
+                extension 'jar'
+            }
             versionMapping {
                 usage( 'java-api' ) {
                     fromResolutionOf( 'runtimeClasspath' )
@@ -79,7 +90,6 @@ publishing {
                 username = project.hasProperty('ossrhUsername') ? ossrhUsername : null
                 password = project.hasProperty('ossrhPassword') ? ossrhPassword : null
             }
-
 
             url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
         }

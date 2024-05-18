@@ -1,11 +1,11 @@
 # casual-java-event-service-log
 
-Provides metrics for all service calls that har invoked within a casual java domain.
+Provides metrics for all service calls that ar invoked within a casual java domain.
 
 Provides same functionality for casual java domains
 as: http://casual.laz.se/documentation/en/1.6/middleware/event/documentation/service.log.html
 
-Metrics in a casual java domain are provided by an Event Server to which the tools is connected via an http url.
+Metrics in a casual java domain are provided by an Event Server to which the tools is connected via a tcp url.
 
 ## configuration¶
 ```shell
@@ -52,9 +52,9 @@ some/service|some/parent/service|9585|ff75bcc6ef1b4d1c8ae8d58ee0918f81|3d7519f80
 
 ## Usage
 
-NB - Although this is a java tool, it can only run on linux environment due to the usage of signal for log rotation.
+NB - Although this is a java tool, it can only run on linux environment due to the usage of signals for log rotation.
 
-Initial release of this application is to be as an "uber-jar" i.e. a single self contained jar with all required dependencies.
+Initial release of this application is to be as an "uber-jar" i.e. a single self-contained jar containing all required dependencies.
 
 The uber-jar can be built from source with the following command.
 
@@ -62,7 +62,7 @@ The uber-jar can be built from source with the following command.
 ./gradlew clean build
 ```
 
-The resulting jar file will be located in `./build/casual-java-event-service-log-<VERSION>-runner.jar`.
+The resulting jar file will be located in `./build/casual-java-event-service-log-<VERSION>.jar`.
 
 Alternatively the uber-jar will be published to maven central and can be downloaded directly from there.
 
@@ -71,7 +71,10 @@ https://s01.oss.sonatype.org/content/repositories/snapshots/se/laz/casual/casual
 
 https://s01.oss.sonatype.org/content/repositories/snapshots/se/laz/casual/casual-java-event-service-log/0.0.1-SNAPSHOT/casual-java-event-service-log-0.0.1-20240516.131741-4.jar
 
-To run the application you can then run the jar, for example, like this, providing the necessary arguments are detailed above:
+NB - An uber-jar is only expected to be run without additional jars on the classpath to avoid dependency conflicts. It should not be used as
+a dependency for other code. Rather the normal artifacts for this code base are also published and available with the traditional classifiers: javadoc, sources, jar.
+
+To run the application you can then run the uber-jar, providing the necessary arguments as detailed above, for example:
 
 ```shell
 java -jar <path-to/uber.jar> --eventServerUrl=tcp://<server>:<port>
@@ -83,7 +86,7 @@ If you wish to wrap this, you can use the following example shell script.
 casual-java-event-service-log.sh:
 ```shell
 #!/bin/bash
-java -jar ./casual-java-event-service-log-0.0.1-runner.jar $@
+java -jar ./casual-java-event-service-log-0.0.1.jar $@
 ```
 NB - ensure that the jar file location is correct.
 
@@ -101,16 +104,16 @@ $ ./casual-java-event-service-log.sh --eventServerUrl=tcp://127.0.0.1:7774
 --filter-inclusive:
 --filter-exclusive:
 --eventServerUrl: tcp://127.0.0.1:7774
-Connected.
+Connected to: tcp://127.0.0.1:7774.
 ```
 
 ## Event Server Connection
 The connection to the event server is continuously maintained whilst running.
 In the event of disconnection the server will retry the connection after 30 seconds.
 
-Though this client tool, requires a connection to the event server to receive events.
-There is no requirement that the event server is running prior to starting this tool,
-it will just continuously attempt to connect every 30 seconds until successful.
+Though this client tool requires a connection to the event server to receive events.
+There is no requirement that the event server is running prior to starting this tool.
+Upon startup it will just continuously attempt to connect every 30 seconds until successful.
 
 To stop the tool, just perform, `Ctrl+C`.
 
@@ -126,27 +129,30 @@ The following is example output from running when the event server is initial no
 --filter-exclusive:
 --eventServerUrl: tcp://127.0.0.1:7774
 Connection failed, retrying in 30000ms: Failed to connect to event server at: tcp://127.0.0.1:7774
-Connected.
-Disconnected, retrying in 30000ms.
-Connected.
+Connected to: tcp://127.0.0.1:7774.
+Disconnected from: tcp://127.0.0.1:7774, retrying in 30000ms.
+Connected to: tcp://127.0.0.1:7774.
 ```
 
-In this example, after the event server was started, we can see that the client successfully connected.
-The event server was then manually stopped, shown with the Disconnection output.
-It was finally restarted, with the client successfully connecting.
+In this example, we see an initial connection failure. After the event server was started, we can
+see that the client successfully connected.
+
+The event server was then manually stopped, shown with the Disconnected output.
+
+It was finally restarted, with the client successfully reconnecting.
 
 ## Log file rotation
 
-It is possible to seamlessly rotate the logs on a running process.
+It is possible to seamlessly rotate the logs whilst running the client application.
 
 The process for log file rotation is as follows:
 
 * Perform a move upon the existing log file.
 * Raise a SIGHUP upon the running client.
-Note - if using the shell wrapper that the SIGHUP must be raised upon the child java process, not the bash wrapper.
+NB - if using the shell wrapper that the SIGHUP must be raised upon the child java process, not the shell wrapper.
 
 After performing the SIGHUP a new log file with the original name will now receive the new events.
-Whilst the moved log file will contain the historic log entries.
+Whilst the moved log file will contain all the log entries prior to raising the SIGHUP.
 
 ### Example
 
@@ -167,7 +173,7 @@ The file is moved and still being written to, until the SIGHUP is raised.
 ```
 
 Get the pid for raising the SIGHUP.
-Note - if using the shell wrapper that the sighup must be raised upon the child java process, not the bash wrapper.
+Note - if using the shell wrapper that the sighup must be raised upon the child java process, not the shell wrapper.
 ```shell
 ps -ef | grep casual-java-event-service-log | grep "java -jar"
 ```
@@ -187,6 +193,6 @@ There are now two files:
 ```
 
 The `statistics.log` file continues to receive new updates whilst the `statistics.log.rotated` file has all the 
-events prior to the issue of the SIGHUP.
+events logged prior to raising the SIGHUP.
 
 The log file has therefore been successfully rotated with no missing event log entries.
