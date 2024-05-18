@@ -96,11 +96,10 @@ public class ClientAutoReconnector
     public void stop()
     {
         this.stop = true;
-        this.scheduledExecutor.shutdown();
         if( client != null )
         {
             client.close();
         }
-        //TODO: 2024-05-18 - CK - Check the order for these, should we call close first before shutdown?
+        this.scheduledExecutor.shutdown();
     }
 }
