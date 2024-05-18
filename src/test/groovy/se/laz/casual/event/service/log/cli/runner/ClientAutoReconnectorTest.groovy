@@ -9,7 +9,7 @@ package se.laz.casual.event.service.log.cli.runner
 import se.laz.casual.api.flags.ErrorState
 import se.laz.casual.event.Order
 import se.laz.casual.event.ServiceCallEvent
-import se.laz.casual.event.service.log.cli.client.EventHandler
+import se.laz.casual.event.client.EventObserver
 import se.laz.casual.test.CasualEmbeddedServer
 import spock.lang.Specification
 
@@ -18,8 +18,6 @@ import java.time.Instant
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.concurrent.CountDownLatch
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
 import static se.laz.casual.event.service.log.cli.internal.StreamEncoder.toPrintWriter
@@ -62,7 +60,8 @@ class ClientAutoReconnectorTest extends Specification
 
     ClientAutoReconnector instance
 
-    ExecutorService executor = Executors.newFixedThreadPool( 1 )
+    EventObserver observer = Mock()
+
 
     def setup()
     {
@@ -75,13 +74,12 @@ class ClientAutoReconnectorTest extends Specification
 
         params.eventServerUrl = eventServerUrl
         EventServiceLogRunner runner = new EventServiceLogRunner( params, toPrintWriter( System.out ) )
-        instance = new ClientAutoReconnector( runner, 50 )
+        instance = new ClientAutoReconnector( observer, runner, 50 )
     }
 
     def cleanup()
     {
         instance.stop(  )
-        executor.shutdownNow(  )
         if( embeddedServer != null )
         {
             embeddedServer.shutdown(  )
@@ -91,12 +89,10 @@ class ClientAutoReconnectorTest extends Specification
     def "Connect initially works, no reconnect required."()
     {
         given:
-        EventHandler handler = Mock()
         CountDownLatch latch = new CountDownLatch( 1 )
-        handler.notify( event ) >> { latch.countDown(  ) }
+        observer.notify( event ) >> { latch.countDown(  ) }
 
         when:
-        executor.submit {instance.maintainClientConnection( handler ) }
         instance.waitForConnection()
         embeddedServer.publishEvent( event )
         latch.await( 50, TimeUnit.MILLISECONDS )
@@ -108,12 +104,10 @@ class ClientAutoReconnectorTest extends Specification
     def "Connect initially works, disconnects, reconnect continues to log."()
     {
         given:
-        EventHandler handler = Mock()
         CountDownLatch latch = new CountDownLatch( 2 )
-        handler.notify( event ) >> { latch.countDown(  ) }
+        observer.notify( event ) >> { latch.countDown(  ) }
 
         when:
-        executor.submit {instance.maintainClientConnection( handler ) }
         instance.waitForConnection(  )
         embeddedServer.publishEvent( event )
         embeddedServer.shutdown(  )
@@ -137,14 +131,12 @@ class ClientAutoReconnectorTest extends Specification
     {
         given:
         embeddedServer.shutdown(  )
-        EventHandler handler = Mock()
         CountDownLatch latch = new CountDownLatch( 1 )
-        handler.notify( event ) >> {
+        observer.notify( event ) >> {
             latch.countDown(  )
         }
 
         when:
-        executor.submit {instance.maintainClientConnection( handler ) }
         embeddedServer.start(  )
         instance.waitForConnection(  )
 
@@ -161,25 +153,13 @@ class ClientAutoReconnectorTest extends Specification
         count >= 1
     }
 
-    def "Immediately stop, fails IllegalStateException."()
+    def "Run then stop."()
     {
         when:
-        instance.stop(  )
-        instance.maintainClientConnection( Mock(EventHandler) )
-
-        then:
-        thrown IllegalStateException
-    }
-
-    def "Run then stop, then run, fails IllegalStateException."()
-    {
-        when:
-        instance.maintainClientConnection( Mock(EventHandler) )
         instance.stop()
-        instance.maintainClientConnection( Mock(EventHandler) )
 
         then:
-        thrown IllegalStateException
+        noExceptionThrown(  )
     }
 
 }

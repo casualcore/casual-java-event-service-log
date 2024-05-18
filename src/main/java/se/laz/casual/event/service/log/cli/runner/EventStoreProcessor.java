@@ -7,15 +7,17 @@
 package se.laz.casual.event.service.log.cli.runner;
 
 import se.laz.casual.event.ServiceCallEventStore;
-import se.laz.casual.event.service.log.cli.client.EventHandler;
+import se.laz.casual.event.service.log.cli.log.EventHandler;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * Read events from the store and send them handling.
+ * Read incoming events from the store and send them handling.
+ *
+ * Utilises a {@link ExecutorService} to perform the processing.
  */
-public class EventProcessor
+public class EventStoreProcessor
 {
     private final ExecutorService executorService = Executors.newFixedThreadPool( 1 );
 
@@ -24,7 +26,7 @@ public class EventProcessor
 
     private boolean stop = false;
 
-    public EventProcessor( ServiceCallEventStore store, EventHandler handler )
+    public EventStoreProcessor( ServiceCallEventStore store, EventHandler handler )
     {
         this.store = store;
         this.handler = handler;
@@ -40,10 +42,13 @@ public class EventProcessor
     {
         while( !stop )
         {
-            this.handler.notify( this.store.take() );
+            this.handler.handle( this.store.take() );
         }
     }
 
+    /**
+     * Stop processing events from the store.
+     */
     public void stop()
     {
         this.stop = true;

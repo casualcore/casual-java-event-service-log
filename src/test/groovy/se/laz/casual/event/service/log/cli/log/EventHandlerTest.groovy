@@ -4,12 +4,11 @@
  * This software is licensed under the MIT license, https://opensource.org/licenses/MIT
  */
 
-package se.laz.casual.event.service.log.cli.client
+package se.laz.casual.event.service.log.cli.log
 
 import se.laz.casual.api.flags.ErrorState
 import se.laz.casual.event.Order
 import se.laz.casual.event.ServiceCallEvent
-import se.laz.casual.event.service.log.cli.client.log.ServiceLogger
 import spock.lang.Specification
 
 import javax.transaction.xa.Xid
@@ -83,7 +82,7 @@ class EventHandlerTest extends Specification
         ServiceCallEvent event = createEvent( name )
 
         when:
-        instance.notify( event )
+        instance.handle( event )
 
         then:
         expected * _logger.logEvent( event )
@@ -116,7 +115,7 @@ class EventHandlerTest extends Specification
     def "notify null event, throws NullPointerException."()
     {
         when:
-        instance.notify( null )
+        instance.handle( null )
 
         then:
         thrown NullPointerException

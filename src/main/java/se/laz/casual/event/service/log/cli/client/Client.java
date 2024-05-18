@@ -8,25 +8,30 @@ package se.laz.casual.event.service.log.cli.client;
 
 import se.laz.casual.event.client.EventClient;
 import se.laz.casual.event.client.EventObserver;
-import se.laz.casual.event.service.log.cli.internal.EventServerConnectionException;
 
 import java.net.URI;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * Connects to the event server, forwarding incoming events to an observer for processing.
+ * <br/>
+ * A wrapper for {@link EventClient} providing a configurable
+ * {@link EventObserver} to process received events as well as
+ * convenience methods to handle disconnection from the event server.
+ */
 public class Client
 {
-
     private final EventClient eventClient;
     private final URI eventServerUrl;
-    private final EventObserver eventHandler;
+    private final EventObserver eventObserver;
     private final CompletableFuture<Boolean> disconnected;
 
     public Client( Builder builder )
     {
         this.eventClient = builder.eventClient;
         this.eventServerUrl = builder.eventServerUrl;
-        this.eventHandler = builder.eventHandler;
+        this.eventObserver = builder.eventObserver;
         this.disconnected = builder.disconnected;
     }
 
@@ -40,9 +45,9 @@ public class Client
         return eventServerUrl;
     }
 
-    public EventObserver getEventHandler()
+    public EventObserver getEventObserver()
     {
-        return eventHandler;
+        return eventObserver;
     }
 
     @Override
@@ -51,7 +56,7 @@ public class Client
         return "Client{" +
                 "eventClient=" + eventClient +
                 ", eventServerUrl=" + eventServerUrl +
-                ", eventHandler=" + eventHandler +
+                ", eventObserver=" + eventObserver +
                 '}';
     }
 
@@ -77,7 +82,7 @@ public class Client
     {
         private EventClient eventClient;
         private URI eventServerUrl;
-        private EventObserver eventHandler;
+        private EventObserver eventObserver;
         private CompletableFuture<Boolean> disconnected = new CompletableFuture<>();
 
         private Builder()
@@ -96,23 +101,23 @@ public class Client
             return this;
         }
 
-        public Builder eventHandler( EventObserver handler )
+        public Builder eventObserver( EventObserver handler )
         {
-            this.eventHandler = handler;
+            this.eventObserver = handler;
             return this;
         }
 
         public Client build()
         {
             Objects.requireNonNull( eventServerUrl, "EventServerUrl is null." );
-            Objects.requireNonNull( eventHandler, "Logger is null." );
+            Objects.requireNonNull( eventObserver, "Event Observer is null." );
             if( eventClient == null )
             {
                 try
                 {
                     eventClient = EventClient.createBuilder().withHost( eventServerUrl.getHost() )
                             .withPort( eventServerUrl.getPort() )
-                            .withEventObserver( eventHandler )
+                            .withEventObserver( eventObserver )
                             .withConnectionObserver( e-> disconnected.complete( true ) )
                             .build();
                     eventClient.connect().get();

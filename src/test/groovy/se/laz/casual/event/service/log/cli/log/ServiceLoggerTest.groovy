@@ -4,7 +4,7 @@
  * This software is licensed under the MIT license, https://opensource.org/licenses/MIT
  */
 
-package se.laz.casual.event.service.log.cli.client.log
+package se.laz.casual.event.service.log.cli.log
 
 import se.laz.casual.api.flags.ErrorState
 import se.laz.casual.api.util.PrettyPrinter
