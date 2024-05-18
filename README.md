@@ -209,5 +209,3 @@ The code is made up of four key components.
 This separation allows for incoming events received over the network to be quickly placed on a queue (event store) for further processing.
 Whilst the slower operation of writing to the log file will be queued, eventually all loggable events will be written to the log.
 This prevents the log writing from slowing down network reads which could cause new events to be rejected under high load.
-
-Testing has shown that the application can process more than 100K events per second.

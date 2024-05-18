@@ -11,7 +11,6 @@ import se.laz.casual.api.util.time.InstantUtil
 import se.laz.casual.event.Order
 import se.laz.casual.event.ServiceCallEvent
 import se.laz.casual.test.CasualEmbeddedServer
-import spock.lang.Ignore
 import spock.lang.Shared
 import spock.lang.Specification
 
@@ -20,8 +19,12 @@ import java.time.Instant
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
-@Ignore
-class Client2Test extends Specification
+/**
+ * Currently these tests are manually run to allow testing of different scenarios.
+ * They just start an embedded event server and push events.
+ * The client needs to be manually run and monitored to check the results.
+ */
+class ClientIntTest extends Specification
 {
     @Shared CasualEmbeddedServer embeddedServer
 
@@ -78,10 +81,10 @@ class Client2Test extends Specification
 
         when:
         Instant start = Instant.now()
-        for( int i=1; i<=2000; i++ )
+        for( int i=1; i<=1; i++ )
         {
             embeddedServer.publishEvent( event )
-            Thread.sleep( 1000 )
+            Thread.sleep( 10 )
         }
         Instant end = Instant.now()
         System.out.println( "Duration" + InstantUtil.toDurationMicro( start, end ) )
@@ -135,7 +138,7 @@ class Client2Test extends Specification
         }
         Instant end = Instant.now()
         System.out.println( "Duration" + InstantUtil.toDurationMicro( start, end ) )
-        //Thread.sleep( 10000 )
+        Thread.sleep( 10000 )
 
         then:
         noExceptionThrown(  )
