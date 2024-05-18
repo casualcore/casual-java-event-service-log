@@ -69,7 +69,7 @@ Alternatively the uber-jar will be published to maven central and can be downloa
 e.g. 
 https://s01.oss.sonatype.org/content/repositories/snapshots/se/laz/casual/casual-java-event-service-log/0.0.1-SNAPSHOT/
 
-https://s01.oss.sonatype.org/content/repositories/snapshots/se/laz/casual/casual-java-event-service-log/0.0.1-SNAPSHOT/casual-java-event-service-log-0.0.1-20240516.131741-4.jar
+https://s01.oss.sonatype.org/content/repositories/snapshots/se/laz/casual/casual-java-event-service-log/0.0.1-SNAPSHOT/casual-java-event-service-log-0.0.1-20240518.152629-5-uber-jar.jar
 
 NB - An uber-jar is only expected to be run without additional jars on the classpath to avoid dependency conflicts. It should not be used as
 a dependency for other code. Rather the normal artifacts for this code base are also published and available with the traditional classifiers: javadoc, sources, jar.
