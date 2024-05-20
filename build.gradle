@@ -1,0 +1,77 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+}
+
+plugins {
+    id 'java'
+    id 'io.quarkus'
+    id 'jacoco'
+    id 'groovy'
+    id("org.sonarqube") version "5.0.0.4638"
+}
+
+repositories {
+    mavenCentral()
+    maven {url 'https://s01.oss.sonatype.org/content/repositories/snapshots' }
+    mavenLocal()
+}
+
+apply from: "$rootProject.projectDir/versions.gradle"
+apply from: "$rootProject.projectDir/publish.gradle"
+apply from: "$rootProject.projectDir/testsourcesets.gradle"
+
+dependencies {
+    implementation enforcedPlatform(libs.quarkus_platform)
+    implementation libs.quarkus_picocli
+    implementation libs.quarkus_arc
+    implementation libs.casual_event_client
+    implementation libs.gson
+
+    annotationProcessor enforcedPlatform(libs.quarkus_platform)
+    annotationProcessor( 'info.picocli:picocli-codegen' )
+
+    testImplementation libs.casual_test
+    testImplementation libs.quarkus_junit5
+    // for spock
+    testImplementation platform(libs.groovy_bom)
+    testImplementation libs.groovy
+    testImplementation platform(libs.spock_bom)
+    testImplementation libs.spock_core
+    testImplementation libs.byte_buddy
+    testImplementation libs.objenesis
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+test {
+    systemProperty "java.util.logging.manager", "org.jboss.logmanager.LogManager"
+}
+compileJava {
+    options.encoding = 'UTF-8'
+    options.compilerArgs <<
+            "-Xlint:all" <<
+            "-Xlint:-processing" << //Turn off warning for missing annotation processors.
+            "-Werror" <<
+            '-parameters'
+}
+
+compileTestJava {
+    options.encoding = 'UTF-8'
+}
+
+sonar {
+    properties {
+        properties["sonar.host.url"] = 'http://localhost:9000'
+        properties["sonar.verbose"] = "true"
+        properties['sonar.java.source'] = 17
+    }
+}
+
+configurations.all {
+    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+}

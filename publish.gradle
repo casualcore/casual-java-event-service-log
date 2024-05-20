@@ -1,0 +1,113 @@
+/*
+ * Copyright (c) 2017 - 2020, The casual project. All rights reserved.
+ *
+ * This software is licensed under the MIT license, https://opensource.org/licenses/MIT
+ */
+
+//-*- coding: utf-8 -*-
+apply plugin: 'signing'
+apply plugin: 'maven-publish'
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+/**
+ * Suppress warning for enforced-platform based on quarkus guidelines:
+ *
+ * https://quarkus.io/guides/gradle-tooling#publishing-your-application
+ * "In order to make sure the right dependency versions are being used by Gradle,
+ * the BOM is declared as an enforcedPlatform in your build file. By default,
+ * the maven-publish plugin will prevent you from publishing your application due
+ * to this enforcedPlatform. This validation can be skipped by adding the following
+ * configuration in your build file".
+*/
+tasks.withType(GenerateModuleMetadata).configureEach {
+    suppressedValidationErrors.add('enforced-platform')
+}
+
+publishing {
+    publications {
+        mavenJava( MavenPublication ) {
+            from components.java
+            // Manually add the built uberjar to the artifacts for publishing with "uber-jar" classifier.
+            artifact( "build/casual-java-event-service-log-${version}.jar")
+            {
+                classifier 'uber-jar'
+                extension 'jar'
+            }
+            versionMapping {
+                usage( 'java-api' ) {
+                    fromResolutionOf( 'runtimeClasspath' )
+                }
+                usage( 'java-runtime' ) {
+                    fromResolutionResult()
+                }
+            }
+            pom {
+                name = 'Casual Java Event Service Log'
+                description = 'Casual Java Event Service Log for Casual middleware.'
+                url = 'http://casual.laz.se'
+
+                licenses {
+                    license {
+                        name = 'MIT License'
+                        url = 'https://opensource.org/licenses/MIT'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:ssh://github.com:casualcore/casual-java-event-service-log.git'
+                    developerConnection = 'scm:git:ssh://github.com:casualcore/casual-java-event-service-log.git'
+                    url = 'https://github.com/casualcore/casual-java-event-service-log'
+                }
+                developers {
+                    developer {
+                        id = 'Aliothe'
+                        name = 'Mathias Creutz'
+                        email = 'mathiascreutz@gmail.com'
+                    }
+                    developer {
+                        id = 'cklellie'
+                        name = 'Chris Kelly'
+                        email = 'christopherjkelly@gmail.com'
+                    }
+                    developer {
+                        id = 'tobiasleo'
+                        name = 'Tobias Leo'
+                        email = 'tobias@tobiasleo.se'
+                    }
+                }
+            }
+
+        }
+    }
+    repositories{
+        maven {
+            def releasesRepoUrl = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+            def snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+            credentials {
+                username = project.hasProperty('ossrhUsername') ? ossrhUsername : null
+                password = project.hasProperty('ossrhPassword') ? ossrhPassword : null
+            }
+
+            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+        }
+    }
+}
+
+
+signing {
+    sign publishing.publications.mavenJava
+}
+
+signMavenJavaPublication.dependsOn quarkusBuild
+
+javadoc {
+    if(JavaVersion.current().isJava9Compatible()) {
+        options.addBooleanOption('html5', true)
+    }
+    if(JavaVersion.current().isCompatibleWith( JavaVersion.VERSION_17 )) {
+        options.addStringOption('Xdoclint:none', '-quiet')
+    }
+}
