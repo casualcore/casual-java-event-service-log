@@ -6,7 +6,7 @@
 
 // casual-java group and version
 group 'se.laz.casual'
-version '0.0.1-SNAPSHOT'
+version '0.0.1'
 
 def quarkusPlatformGroupId = 'io.quarkus.platform'
 def quarkusPlatformArtifactId = 'quarkus-bom'
