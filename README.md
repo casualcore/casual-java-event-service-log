@@ -66,10 +66,19 @@ The resulting jar file will be located in `./build/casual-java-event-service-log
 
 Alternatively the uber-jar will be published to maven central and can be downloaded directly from there.
 
-e.g. 
-https://s01.oss.sonatype.org/content/repositories/snapshots/se/laz/casual/casual-java-event-service-log/0.0.1-SNAPSHOT/
+https://central.sonatype.com/artifact/se.laz.casual/casual-java-event-service-log/overview
 
-https://s01.oss.sonatype.org/content/repositories/snapshots/se/laz/casual/casual-java-event-service-log/0.0.1-SNAPSHOT/casual-java-event-service-log-0.0.1-20240518.152629-5-uber-jar.jar
+Maven Central Coordinates:
+```xml
+<dependency>
+  <groupId>se.laz.casual</groupId>
+  <artifactId>casual-java-event-service-log</artifactId>
+  <version>0.0.1</version>
+  <classifier>uber-jar</classifier>
+</dependency>
+```
+e.g.
+https://repo1.maven.org/maven2/se/laz/casual/casual-java-event-service-log/0.0.1/casual-java-event-service-log-0.0.1-uber-jar.jar
 
 NB - An uber-jar is only expected to be run without additional jars on the classpath to avoid dependency conflicts. It should not be used as
 a dependency for other code. Rather the normal artifacts for this code base are also published and available with the traditional classifiers: javadoc, sources, jar.
