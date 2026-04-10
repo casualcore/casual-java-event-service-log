@@ -83,7 +83,7 @@ public class Client
         private EventClient eventClient;
         private URI eventServerUrl;
         private EventObserver eventObserver;
-        private CompletableFuture<Boolean> disconnected = new CompletableFuture<>();
+        private final CompletableFuture<Boolean> disconnected = new CompletableFuture<>();
 
         private Builder()
         {

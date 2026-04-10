@@ -11,8 +11,8 @@ version '0.0.1'
 def quarkusPlatformGroupId = 'io.quarkus.platform'
 def quarkusPlatformArtifactId = 'quarkus-bom'
 def quarkusPlatformVersion = '3.10.0'
-def casualVersion = '3.2.41'
-def gson_version = '2.10.1'
+def casualVersion = '3.4.2'
+def gson_version = '2.13.2'
 
 ext.libs = [
         quarkus_platform: "${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}",

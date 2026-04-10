@@ -3,7 +3,11 @@
 Provides metrics for all service calls that ar invoked within a casual java domain.
 
 Provides same functionality for casual java domains
-as: http://casual.laz.se/documentation/en/1.6/middleware/event/documentation/service.log.html
+as: 
+
+* [service log for gateway protocol 1.0 to 1.2] (https://casualcore.github.io/docs/release/1.6/middleware/event/documentation/service.log.html)
+* [service log for gateway protocol 1.3 to 1.4] (https://casualcore.github.io/docs/release/1.7/middleware/event/documentation/service.log.html)
+
 
 Metrics in a casual java domain are provided by an Event Server to which the tools is connected via a tcp url.
 

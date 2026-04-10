@@ -51,7 +51,9 @@ public class ServiceCallEventFormatter
         appendColumn( event.getPending() );
         appendColumn( event.getCode() );
         appendColumn( event.getOrder() );
-
+        event.getSpan().ifPresent(this::appendColumn);
+        event.getParentSpan().ifPresent(this::appendColumn);
+        event.getUserDefinedCode().ifPresent(this::appendColumn);
         return String.join( delimiter, columnValues );
     }
     private void appendColumn( long data )
