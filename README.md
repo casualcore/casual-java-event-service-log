@@ -89,7 +89,7 @@ implementation("se.laz.casual:casual-java-event-service-log:0.0.2:uber-jar")
 
 
 e.g.
-https://repo1.maven.org/maven2/se/laz/casual/casual-java-event-service-log/0.0.1/casual-java-event-service-log-0.0.1-uber-jar.jar
+https://repo1.maven.org/maven2/se/laz/casual/casual-java-event-service-log/0.0.2/casual-java-event-service-log-0.0.2-uber-jar.jar
 
 NB - An uber-jar is only expected to be run without additional jars on the classpath to avoid dependency conflicts. It should not be used as
 a dependency for other code. Rather the normal artifacts for this code base are also published and available with the traditional classifiers: javadoc, sources, jar.
@@ -106,7 +106,7 @@ If you wish to wrap this, you can use the following example shell script.
 casual-java-event-service-log.sh:
 ```shell
 #!/bin/bash
-java -jar ./casual-java-event-service-log-0.0.1.jar $@
+java -jar ./casual-java-event-service-log-0.0.2.jar $@
 ```
 NB - ensure that the jar file location is correct.
 
@@ -199,7 +199,7 @@ ps -ef | grep casual-java-event-service-log | grep "java -jar"
 ```
 Output:
 ```shell
-ck        517785  517784  7 13:37 pts/2    00:00:01 java -jar ./casual-java-event-service-log-0.0.1-runner.jar --eventServerUrl=tcp://192.168.68.117:7774
+ck        517785  517784  7 13:37 pts/2    00:00:01 java -jar ./casual-java-event-service-log-0.0.2-runner.jar --eventServerUrl=tcp://192.168.68.117:7774
 ```
 
 Raise SIGHUP:
