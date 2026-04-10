@@ -77,10 +77,17 @@ Maven Central Coordinates:
 <dependency>
   <groupId>se.laz.casual</groupId>
   <artifactId>casual-java-event-service-log</artifactId>
-  <version>0.0.1</version>
+  <version>0.0.2</version>
   <classifier>uber-jar</classifier>
 </dependency>
 ```
+gradle:
+```gradle
+implementation("se.laz.casual:casual-java-event-service-log:0.0.2:uber-jar")
+```
+
+
+
 e.g.
 https://repo1.maven.org/maven2/se/laz/casual/casual-java-event-service-log/0.0.1/casual-java-event-service-log-0.0.1-uber-jar.jar
 
