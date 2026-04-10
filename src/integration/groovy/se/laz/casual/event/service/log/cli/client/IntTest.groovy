@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024, The casual project. All rights reserved.
+ * Copyright (c) 2026, The casual project. All rights reserved.
  *
  * This software is licensed under the MIT license, https://opensource.org/licenses/MIT
  */
@@ -131,7 +131,7 @@ class IntTest extends Specification
         embeddedServer.publishEvent( event )
         embeddedServer.publishEvent( eventWithTracing )
 
-        // poll until events are written to file
+        // poll until both events have been written to file
         def lines = []
         while( lines.size(  ) < 2)
         {
