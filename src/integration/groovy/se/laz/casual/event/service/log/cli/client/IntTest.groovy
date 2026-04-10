@@ -119,10 +119,7 @@ class IntTest extends Specification
     {
         storeProcessor?.stop(  )
         client?.close(  )
-        if( embeddedServer != null )
-        {
-            embeddedServer.shutdown(  )
-        }
+        embeddedServer?.shutdown(  )
     }
 
     def "Events are published and written to file with correct content"()
@@ -145,12 +142,10 @@ class IntTest extends Specification
         and: 'event without tracing data matches expected format'
         def expectedEvent = ServiceCallEventFormatter.format( event, delimiter )
         lines[0] == expectedEvent
-        println("line 1: ${lines[0]}")
 
         and: 'event with tracing data matches expected format'
         def expectedEventWithTracing = ServiceCallEventFormatter.format( eventWithTracing, delimiter )
         lines[1] == expectedEventWithTracing
-        println("line 2: ${lines[1]}")
     }
 
 }
