@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024, The casual project. All rights reserved.
+ * Copyright (c) 2024 - 2026, The casual project. All rights reserved.
  *
  * This software is licensed under the MIT license, https://opensource.org/licenses/MIT
  */
@@ -83,7 +83,7 @@ public class Client
         private EventClient eventClient;
         private URI eventServerUrl;
         private EventObserver eventObserver;
-        private CompletableFuture<Boolean> disconnected = new CompletableFuture<>();
+        private final CompletableFuture<Boolean> disconnected = new CompletableFuture<>();
 
         private Builder()
         {

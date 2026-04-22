@@ -6,12 +6,12 @@
 
 // casual-java group and version
 group 'se.laz.casual'
-version '0.0.1'
+version '0.0.2'
 
 def quarkusPlatformGroupId = 'io.quarkus.platform'
 def quarkusPlatformArtifactId = 'quarkus-bom'
 def quarkusPlatformVersion = '3.10.0'
-def casualVersion = '3.2.41'
+def casualVersion = '3.4.2'
 def gson_version = '2.10.1'
 
 ext.libs = [

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024, The casual project. All rights reserved.
+ * Copyright (c) 2024 - 2026, The casual project. All rights reserved.
  *
  * This software is licensed under the MIT license, https://opensource.org/licenses/MIT
  */
@@ -10,7 +10,9 @@ import se.laz.casual.api.flags.ErrorState
 import se.laz.casual.api.util.time.InstantUtil
 import se.laz.casual.event.Order
 import se.laz.casual.event.ServiceCallEvent
+import se.laz.casual.jca.SpanId
 import se.laz.casual.test.CasualEmbeddedServer
+import spock.lang.Ignore
 import spock.lang.Shared
 import spock.lang.Specification
 
@@ -23,13 +25,18 @@ import java.time.format.DateTimeFormatter
  * Currently these tests are manually run to allow testing of different scenarios.
  * They just start an embedded event server and push events.
  * The client needs to be manually run and monitored to check the results.
+ *
+ * Enable it whenever you want to do manual work
  */
+@Ignore
 class ClientIntTest extends Specification
 {
     @Shared CasualEmbeddedServer embeddedServer
 
     @Shared String service1 = "test1"
     @Shared String parent1 = "parent"
+    @Shared String spanId = SpanId.of().asHex()
+    @Shared String parentSpanId = SpanId.of().asHex()
     @Shared int pid1 = 123
     @Shared UUID execution1 = UUID.randomUUID()
     @Shared Xid transactionId1 = Mock(Xid)
@@ -51,6 +58,21 @@ class ClientIntTest extends Specification
             .withCode(code1)
             .withOrder(order1)
             .build()
+
+   @Shared ServiceCallEvent eventWithTracing = ServiceCallEvent.createBuilder(  )
+           .withService(service1)
+           .withParent(parent1)
+           .withPID(pid1)
+           .withExecution(execution1)
+           .withTransactionId(transactionId1)
+           .withPending( pending1 )
+           .withStart( start1 )
+           .withEnd( end1 )
+           .withCode(code1)
+           .withOrder(order1)
+           .withSpanId(spanId)
+           .withParentSpanId(parentSpanId)
+           .build()
 
     @Shared URI eventServerUrl
 
@@ -84,6 +106,7 @@ class ClientIntTest extends Specification
         for( int i=1; i<=1000; i++ )
         {
             embeddedServer.publishEvent( event )
+            embeddedServer.publishEvent( eventWithTracing )
             Thread.sleep( 10 )
         }
         Instant end = Instant.now()
@@ -105,6 +128,7 @@ class ClientIntTest extends Specification
         for( int i=1; i<=2000; i++ )
         {
             embeddedServer.publishEvent( event )
+            embeddedServer.publishEvent( eventWithTracing )
             Thread.sleep( 5000 )
             if( i % 10 == 0 )
             {
@@ -134,7 +158,7 @@ class ClientIntTest extends Specification
         for( int i=1; i<=100000; i++ )
         {
             embeddedServer.publishEvent( event )
-            //Thread.sleep( 1 )
+            embeddedServer.publishEvent( eventWithTracing )
         }
         Instant end = Instant.now()
         System.out.println( "Duration" + InstantUtil.toDurationMicro( start, end ) )

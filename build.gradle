@@ -9,12 +9,19 @@ plugins {
     id 'io.quarkus'
     id 'jacoco'
     id 'groovy'
-    id("org.sonarqube") version "5.0.0.4638"
+    id "org.sonarqube" version "7.1.0.6387"
 }
 
 repositories {
     mavenCentral()
-    maven {url 'https://s01.oss.sonatype.org/content/repositories/snapshots' }
+    maven {
+        name = 'Central Portal Snapshots'
+        url = 'https://central.sonatype.com/repository/maven-snapshots/'
+        // Only search this repository for the specific dependency group
+        content {
+            includeGroup("se.laz.casual")
+        }
+    }
     mavenLocal()
 }
 
