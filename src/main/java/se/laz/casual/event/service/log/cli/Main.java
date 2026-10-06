@@ -39,6 +39,8 @@ public class Main implements Callable<Integer>, EventServiceLogParams
     private Pattern logFilterExclusive;
     @Option( names = {"--eventServerUrl"}, description = "event server from which to retrieve events.", required = true )
     private URI eventServerUrl;
+    @Option( names = {"--connectionRetryDelay"}, description = "delay between connection retries in milliseconds (default: ${DEFAULT-VALUE})", defaultValue = "30000" )
+    private long connectionRetryDelay;
 
     @Override
     public URI getEventServerUrl( )
@@ -70,6 +72,11 @@ public class Main implements Callable<Integer>, EventServiceLogParams
         return Optional.ofNullable( this.logFilterExclusive );
     }
 
+    @Override
+    public long getConnectionRetryDelay()
+    {
+        return connectionRetryDelay;
+    }
 
     public static void main( String[] args )
     {

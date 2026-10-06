@@ -134,4 +134,19 @@ class MainTest extends Specification
         "group"  | [eUrl, "--filter-exclusive=^[a-z]+"]     | Pattern.compile( "^[a-z]+" )
         "quotes" | [eUrl, "--filter-exclusive=\"^[0-9]+\""] | Pattern.compile( "^[0-9]+" )
     }
+
+    def "Call with #desc retry delay"()
+    {
+        when:
+        CommandLine.ParseResult result = commandLine.parseArgs( args as String[] )
+
+        then:
+        result.errors().size() == 0
+        instance.getConnectionRetryDelay() == expectedDelay
+
+        where:
+        desc         | args                                 | expectedDelay
+        "default"    | [eUrl]                               | 30000
+        "configured" | [eUrl, "--connectionRetryDelay=500"] | 500
+    }
 }

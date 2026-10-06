@@ -1,30 +1,34 @@
 # casual-java-event-service-log
 
-Provides metrics for all service calls that ar invoked within a casual java domain.
+Provides metrics for all service calls that are invoked within a casual java domain.
 
-Provides same functionality for casual java domains
-as: 
+Provides the same functionality for casual java domains as: 
 
 * [service log for gateway protocol 1.0 to 1.2](https://casualcore.github.io/docs/release/1.6/middleware/event/documentation/service.log.html)
 * [service log for gateway protocol 1.3 to 1.4](https://casualcore.github.io/docs/release/1.7/middleware/event/documentation/service.log.html)
 
 
-Metrics in a casual java domain are provided by an Event Server to which the tools is connected via a tcp url.
+Metrics in a casual java domain are provided by an Event Server to which the tool is connected via a tcp url.
 
 ## configuration
 ```shell
-Usage: casual-java-event-service-log [-hV] [-d=<logColumnDelimiter>]
-                                     --eventServerUrl=<eventServerUrl>
-                                     [-f=<logFile>]
-                                     [--filter-exclusive=<logFilterExclusive>]
-                                     [--filter-inclusive=<logFilterInclusive>]
-  -d, --delimiter=<logColumnDelimiter> delimiter between columns (default: |)
-      --eventServerUrl=<eventServerUrl> event server from which to retrieve events.
+Usage: casual-java-event-service-log [-hV] [--connectionRetryDelay=<connectionRetryDelay>] [-d=<logColumnDelimiter>]
+                                     --eventServerUrl=<eventServerUrl> [-f=<logFile>]
+                                     [--filter-exclusive=<logFilterExclusive>] [--filter-inclusive=<logFilterInclusive>]
+      --connectionRetryDelay=<connectionRetryDelay>
+                         delay between connection retries in milliseconds (default: 30000)
+  -d, --delimiter=<logColumnDelimiter>
+                         delimiter between columns (default: |)
+      --eventServerUrl=<eventServerUrl>
+                         event server from which to retrieve events.
   -f, --file=<logFile>   where to log (default: statistics.log)
-      --filter-exclusive=<logFilterExclusive> only services that do not match the expression are logged
-      --filter-inclusive=<logFilterInclusive> only services that match the expression are logged
+      --filter-exclusive=<logFilterExclusive>
+                         only services that do not match the expression are logged
+      --filter-inclusive=<logFilterInclusive>
+                         only services that match the expression are logged
   -h, --help             Show this help message and exit.
   -V, --version          Print version information and exit.
+[
 ```
 
 ## example
@@ -83,7 +87,7 @@ some/service|some/parent/service|90053|0bd2c4b424e34e2296c25938766eedbf|10459c8a
 
 NB - Although this is a java tool, it can only run on linux environment due to the usage of signals for log rotation.
 
-Initial release of this application is to be as an "uber-jar" i.e. a single self-contained jar containing all required dependencies.
+The initial release of this application is to be as an "uber-jar" i.e. a single self-contained jar containing all required dependencies.
 
 The uber-jar can be built from source with the following command.
 
@@ -93,7 +97,7 @@ The uber-jar can be built from source with the following command.
 
 The resulting jar file will be located in `./build/casual-java-event-service-log-<VERSION>.jar`.
 
-Alternatively the uber-jar will be published to maven central and can be downloaded directly from there.
+Alternatively, the uber-jar will be published to maven central and can be downloaded directly from there.
 
 https://central.sonatype.com/artifact/se.laz.casual/casual-java-event-service-log/overview
 
@@ -102,19 +106,19 @@ Maven Central Coordinates:
 <dependency>
   <groupId>se.laz.casual</groupId>
   <artifactId>casual-java-event-service-log</artifactId>
-  <version>0.0.2</version>
+  <version>0.1.0</version>
   <classifier>uber-jar</classifier>
 </dependency>
 ```
 gradle:
 ```gradle
-implementation("se.laz.casual:casual-java-event-service-log:0.0.2:uber-jar")
+implementation("se.laz.casual:casual-java-event-service-log:0.1.0:uber-jar")
 ```
 
 
 
 e.g.
-https://repo1.maven.org/maven2/se/laz/casual/casual-java-event-service-log/0.0.2/casual-java-event-service-log-0.0.2-uber-jar.jar
+https://repo1.maven.org/maven2/se/laz/casual/casual-java-event-service-log/0.1.0/casual-java-event-service-log-0.1.0-uber-jar.jar
 
 NB - An uber-jar is only expected to be run without additional jars on the classpath to avoid dependency conflicts. It should not be used as
 a dependency for other code. Rather the normal artifacts for this code base are also published and available with the traditional classifiers: javadoc, sources, jar.
@@ -131,7 +135,7 @@ If you wish to wrap this, you can use the following example shell script.
 casual-java-event-service-log.sh:
 ```shell
 #!/bin/bash
-java -jar ./casual-java-event-service-log-0.0.2.jar $@
+java -jar ./casual-java-event-service-log-0.1.0.jar $@
 ```
 NB - ensure that the jar file location is correct.
 
@@ -149,7 +153,7 @@ $ ./casual-java-event-service-log.sh --eventServerUrl=tcp://127.0.0.1:7774
 --filter-inclusive:
 --filter-exclusive:
 --eventServerUrl: tcp://127.0.0.1:7774
-Connected to: tcp://127.0.0.1:7774.
+[casual-java-event-service-log] Connected to: tcp://127.0.0.1:7774.
 ```
 
 ## Event Server Connection
@@ -173,10 +177,10 @@ The following is example output from running when the event server is initial no
 --filter-inclusive:
 --filter-exclusive:
 --eventServerUrl: tcp://127.0.0.1:7774
-Connection failed, retrying in 30000ms: Failed to connect to event server at: tcp://127.0.0.1:7774
-Connected to: tcp://127.0.0.1:7774.
-Disconnected from: tcp://127.0.0.1:7774, retrying in 30000ms.
-Connected to: tcp://127.0.0.1:7774.
+[casual-java-event-service-log] Connection failed, retrying in 30000ms: Failed to connect to event server at: tcp://127.0.0.1:7774
+[casual-java-event-service-log] Connected to: tcp://127.0.0.1:7774.
+[casual-java-event-service-log] Disconnected from: tcp://127.0.0.1:7774, retrying in 30000ms.
+[casual-java-event-service-log] Connected to: tcp://127.0.0.1:7774.
 ```
 
 In this example, we see an initial connection failure. After the event server was started, we can
@@ -224,7 +228,7 @@ ps -ef | grep casual-java-event-service-log | grep "java -jar"
 ```
 Output:
 ```shell
-ck        517785  517784  7 13:37 pts/2    00:00:01 java -jar ./casual-java-event-service-log-0.0.2-runner.jar --eventServerUrl=tcp://192.168.68.117:7774
+ck        517785  517784  7 13:37 pts/2    00:00:01 java -jar ./casual-java-event-service-log-0.1.0-runner.jar --eventServerUrl=tcp://192.168.68.117:7774
 ```
 
 Raise SIGHUP:

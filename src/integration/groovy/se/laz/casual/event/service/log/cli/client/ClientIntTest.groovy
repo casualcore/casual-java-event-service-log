@@ -40,6 +40,10 @@ class ClientIntTest extends Specification
     @Shared int pid1 = 123
     @Shared UUID execution1 = UUID.randomUUID()
     @Shared Xid transactionId1 = Mock(Xid)
+    @Shared Xid transactionIdTransactional = Mock(Xid)
+    @Shared long formatId = 42
+    @Shared byte[] bqual = HexFormat.of().parseHex("00000101")
+    @Shared byte[] gtrid = HexFormat.of().parseHex("deadbeef")
     @Shared long pending1 = 5L
     @Shared ErrorState code1 = ErrorState.OK
     @Shared Order order1 = Order.CONCURRENT
@@ -74,6 +78,8 @@ class ClientIntTest extends Specification
            .withParentSpanId(parentSpanId)
            .build()
 
+    @Shared ServiceCallEvent transactionalEvent
+
     @Shared URI eventServerUrl
 
     def setupSpec()
@@ -85,6 +91,23 @@ class ClientIntTest extends Specification
         embeddedServer.start(  )
 
         eventServerUrl = URI.create("tcp://localhost:" + embeddedServer.getEventServerPort(  ).get() )
+
+        transactionIdTransactional.formatId >> formatId
+        transactionIdTransactional.branchQualifier >> bqual
+        transactionIdTransactional.globalTransactionId >> gtrid
+
+        transactionalEvent = ServiceCallEvent.createBuilder()
+                .withService(service1)
+                .withParent(parent1)
+                .withPID(pid1)
+                .withExecution(execution1)
+                .withTransactionId(transactionIdTransactional)
+                .withPending( pending1 )
+                .withStart( start1 )
+                .withEnd( end1 )
+                .withCode(code1)
+                .withOrder(order1)
+                .build()
     }
 
     def cleanupSpec()
@@ -101,12 +124,15 @@ class ClientIntTest extends Specification
         Thread.sleep( 10000 )
         System.out.println( "Firing away...")
 
+        System.out.println(transactionIdTransactional.getFormatId())
+
         when:
         Instant start = Instant.now()
         for( int i=1; i<=1000; i++ )
         {
             embeddedServer.publishEvent( event )
             embeddedServer.publishEvent( eventWithTracing )
+            embeddedServer.publishEvent( transactionalEvent )
             Thread.sleep( 10 )
         }
         Instant end = Instant.now()
@@ -129,6 +155,7 @@ class ClientIntTest extends Specification
         {
             embeddedServer.publishEvent( event )
             embeddedServer.publishEvent( eventWithTracing )
+            embeddedServer.publishEvent( transactionalEvent )
             Thread.sleep( 5000 )
             if( i % 10 == 0 )
             {
@@ -159,6 +186,7 @@ class ClientIntTest extends Specification
         {
             embeddedServer.publishEvent( event )
             embeddedServer.publishEvent( eventWithTracing )
+            embeddedServer.publishEvent( transactionalEvent )
         }
         Instant end = Instant.now()
         System.out.println( "Duration" + InstantUtil.toDurationMicro( start, end ) )

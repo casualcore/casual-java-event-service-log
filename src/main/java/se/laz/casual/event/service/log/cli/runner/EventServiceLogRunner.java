@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024, The casual project. All rights reserved.
+ * Copyright (c) 2024 - 2026, The casual project. All rights reserved.
  *
  * This software is licensed under the MIT license, https://opensource.org/licenses/MIT
  */
@@ -20,8 +20,8 @@ import java.util.UUID;
 
 /**
  * Runs the command based on the validated inputs provided.
- *
- * Input validation is performed prior this, by picocli.
+ * <br/>
+ * Input validation is performed prior to this, by picocli.
  */
 public class EventServiceLogRunner implements CommandRunner<EventServiceLogParams>
 {
@@ -48,7 +48,7 @@ public class EventServiceLogRunner implements CommandRunner<EventServiceLogParam
     }
 
     /**
-     * The commands execution entry point.
+     * The command's execution entry point.
      * <br/>
      * Initialise based on input params.
      * <br/>
@@ -60,6 +60,7 @@ public class EventServiceLogRunner implements CommandRunner<EventServiceLogParam
     @Override
     public int run()
     {
+        outputStream.println( "[casual-java-event-service-log] Starting with params:");
         outputStream.println( printParams() );
         outputStream.flush();
 
@@ -70,7 +71,7 @@ public class EventServiceLogRunner implements CommandRunner<EventServiceLogParam
 
         // Run event processor and establish client connection.
         EventStoreProcessor storeProcessor = new EventStoreProcessor( store, handler );
-        ClientAutoReconnector clientAutoReconnector = new ClientAutoReconnector( store::put,this, 30000 );
+        ClientAutoReconnector clientAutoReconnector = new ClientAutoReconnector( store::put,this, params.getConnectionRetryDelay() );
 
         Quarkus.waitForExit();
 
@@ -110,6 +111,9 @@ public class EventServiceLogRunner implements CommandRunner<EventServiceLogParam
         builder.append( System.lineSeparator() );
 
         builder.append( "--eventServerUrl: " ).append( params.getEventServerUrl() )
+                .append( System.lineSeparator() );
+
+        builder.append( "--connectionRetryDelay: " ).append( params.getConnectionRetryDelay() )
                 .append( System.lineSeparator() );
         return builder;
     }

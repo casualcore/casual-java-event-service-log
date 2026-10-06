@@ -6,6 +6,8 @@
 
 package se.laz.casual.event.service.log.cli.client;
 
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.nio.NioEventLoopGroup;
 import se.laz.casual.event.client.EventClient;
 import se.laz.casual.event.client.EventObserver;
 
@@ -84,6 +86,7 @@ public class Client
         private URI eventServerUrl;
         private EventObserver eventObserver;
         private final CompletableFuture<Boolean> disconnected = new CompletableFuture<>();
+        private static final EventLoopGroup EVENT_LOOP_GROUP = new NioEventLoopGroup(1);
 
         private Builder()
         {
@@ -119,13 +122,14 @@ public class Client
                             .withPort( eventServerUrl.getPort() )
                             .withEventObserver( eventObserver )
                             .withConnectionObserver( e-> disconnected.complete( true ) )
+                            .withEventLoopGroup(EVENT_LOOP_GROUP)
                             .build();
                     eventClient.connect().get();
                 }
                 catch( InterruptedException e )
                 {
                     Thread.currentThread().interrupt();
-                    throw new EventServerConnectionException( "Thread interupted during connection.", e );
+                    throw new EventServerConnectionException( "Thread interrupted during connection.", e );
                 }
                 catch( Exception t )
                 {

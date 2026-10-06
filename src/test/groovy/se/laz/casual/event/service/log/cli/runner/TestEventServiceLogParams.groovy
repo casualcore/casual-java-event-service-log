@@ -41,4 +41,9 @@ class TestEventServiceLogParams implements EventServiceLogParams
     {
         return Optional.ofNullable( logFilterExclusive )
     }
+
+    @Override
+    long getConnectionRetryDelay() {
+        return 0
+    }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024, The casual project. All rights reserved.
+ * Copyright (c) 2024 - 2026, The casual project. All rights reserved.
  *
  * This software is licensed under the MIT license, https://opensource.org/licenses/MIT
  */
@@ -68,16 +68,16 @@ public class ClientAutoReconnector
         {
             client = Client.newBuilder().eventServerUrl( eventServerUrl ).eventObserver( eventObserver ).build();
             connected.complete( true );
-            outputStream.println( "Connected to: " + eventServerUrl );
+            outputStream.println( "[casual-java-event-service-log] Connected to: " + eventServerUrl );
             outputStream.flush();
             client.waitForDisconnect();
-            outputStream.println( "Disconnected from: " + eventServerUrl + ", retrying in " + backoff + "ms." );
+            outputStream.println( "[casual-java-event-service-log] Disconnected from: " + eventServerUrl + ", retrying in " + backoff + "ms." );
             outputStream.flush();
         }
         catch( EventServerConnectionException e )
         {
             connected.complete( false );
-            outputStream.println( "Connection failed, retrying in " + backoff + "ms: " + e.getMessage() );
+            outputStream.println( "[casual-java-event-service-log] Connection failed, retrying in " + backoff + "ms: " + e.getMessage() );
             outputStream.flush();
         }
         finally
