@@ -34,8 +34,8 @@ publishing {
             // Manually add the built uberjar to the artifacts for publishing with "uber-jar" classifier.
             artifact( "build/casual-java-event-service-log-${version}.jar")
             {
-                classifier 'uber-jar'
-                extension 'jar'
+                classifier = 'uber-jar'
+                extension = 'jar'
             }
             versionMapping {
                 usage( 'java-api' ) {

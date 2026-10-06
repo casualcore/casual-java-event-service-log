@@ -1,18 +1,18 @@
 /*
- * Copyright (c) 2024, The casual project. All rights reserved.
+ * Copyright (c) 2024 - 2026, The casual project. All rights reserved.
  *
  * This software is licensed under the MIT license, https://opensource.org/licenses/MIT
  */
 
 // casual-java group and version
-group 'se.laz.casual'
-version '0.0.2'
+group = 'se.laz.casual'
+version = '0.0.2'
 
 def quarkusPlatformGroupId = 'io.quarkus.platform'
 def quarkusPlatformArtifactId = 'quarkus-bom'
-def quarkusPlatformVersion = '3.10.0'
-def casualVersion = '3.4.2'
-def gson_version = '2.10.1'
+def quarkusPlatformVersion = '3.40.1'
+def casualVersion = '3.7.0'
+def gson_version = '2.14.0'
 
 ext.libs = [
         quarkus_platform: "${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}",
@@ -26,11 +26,11 @@ ext.libs = [
         casual_test : "se.laz.casual:casual-test:${casualVersion}",
 
         // for spock
-        groovy_bom      : 'org.apache.groovy:groovy-bom:4.0.5',
+        groovy_bom      : 'org.apache.groovy:groovy-bom:4.0.33',
         groovy          : 'org.apache.groovy:groovy',
-        spock_bom       : 'org.spockframework:spock-bom:2.3-groovy-4.0',
+        spock_bom       : 'org.spockframework:spock-bom:2.4-groovy-4.0',
         spock_core      : 'org.spockframework:spock-core',
         spock_junit4    : 'org.spockframework:spock-junit4',
-        byte_buddy      : 'net.bytebuddy:byte-buddy:1.14.8',
-        objenesis       : 'org.objenesis:objenesis:3.3',
+        byte_buddy      : 'net.bytebuddy:byte-buddy:1.18.12',
+        objenesis       : 'org.objenesis:objenesis:3.6',
 ]

@@ -9,7 +9,7 @@ plugins {
     id 'io.quarkus'
     id 'jacoco'
     id 'groovy'
-    id "org.sonarqube" version "7.1.0.6387"
+    id "org.sonarqube" version "7.4.0.8496"
 }
 
 repositories {
@@ -51,8 +51,8 @@ dependencies {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }
 
 test {
@@ -75,10 +75,10 @@ sonar {
     properties {
         properties["sonar.host.url"] = 'http://localhost:9000'
         properties["sonar.verbose"] = "true"
-        properties['sonar.java.source'] = 17
+        properties['sonar.java.source'] = 21
     }
 }
 
-configurations.all {
+configurations.configureEach {
     resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
 }

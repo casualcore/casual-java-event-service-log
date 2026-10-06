@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2017 - 2018, The casual project. All rights reserved.
+ * Copyright (c) 2017 - 2026, The casual project. All rights reserved.
  *
  * This software is licensed under the MIT license, https://opensource.org/licenses/MIT
  */
 
 allprojects {
-    plugins.withType(JavaPlugin) {
+    plugins.withType(JavaPlugin).configureEach {
         configurations{
            integration        
         }        
@@ -16,14 +16,14 @@ allprojects {
               compileClasspath += configurations.testCompileClasspath
               runtimeClasspath += configurations.testRuntimeClasspath
            }
-        }      
-        
-        task intTest( type: Test){
-           testClassesDirs = sourceSets.integration.output.classesDirs
-           classpath += sourceSets.integration.compileClasspath
-           classpath += sourceSets.integration.runtimeClasspath           
-           reports.html.outputLocation = file("$rootProject.projectDir/build/integration")
-           reports.junitXml.outputLocation = file("$rootProject.projectDir/build/integration")
+        }
+
+        tasks.register('intTest', Test) {
+            testClassesDirs = sourceSets.integration.output.classesDirs
+            classpath += sourceSets.integration.compileClasspath
+            classpath += sourceSets.integration.runtimeClasspath
+            reports.html.outputLocation = file("$rootProject.projectDir/build/integration")
+            reports.junitXml.outputLocation = file("$rootProject.projectDir/build/integration")
         }
         test {
             finalizedBy jacocoTestReport
